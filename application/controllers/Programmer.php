@@ -4,6 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Programmer extends CI_Controller
 {
+  private $filename = 'import_file';
 
   public function __construct()
   {
@@ -116,6 +117,41 @@ class Programmer extends CI_Controller
       $this->db->insert('user_sub_menu', $data);
       redirect('programmer/submenu_builder');
     }
+  }
+
+  public function import()
+  {
+    $data['title'] = 'Import Excel';
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+    $this->load->view('app/templates/header', $data);
+    $this->load->view('app/templates/sidebar', $data);
+    $this->load->view('app/templates/navbar', $data);
+    $this->load->view('app/programmer/import', $data);
+    $this->load->view('app/templates/footer', $data);
+  }
+
+  public function import_progress()
+  {
+    $this->load->model('Import_model', 'import_mod');
+    include APPPATH . 'third_party/excel_reader2.php';
+
+    $upload = $this->import_mod->upload_file($this->filename);
+
+    chmod(FCPATH . 'assets/excel/' . $upload['file']['file_name'], 0777);
+    // error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+
+    $data = new Spreadsheet_Excel_Reader(FCPATH . 'assets/excel/' . $upload['file']['file_name']);
+    $data->setOutputEncoding('CP1251');
+    $numrows = $data->rowcount($sheet_index = 0);
+
+    $success = 0;
+    for ($i = 2; $i <= $numrows; $i++) {
+      $nama = $data->val($i, 1);
+      print_r($name);
+    }
+
+    die();
   }
 }
 

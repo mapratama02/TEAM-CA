@@ -1,5 +1,7 @@
 <div class="container-fluid">
 
+
+
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
@@ -121,41 +123,26 @@
 
   <div class="row mb-4">
 
-    <!-- <div class="col-xl-12 col-lg-7">
-      <div class="card h-100 shadow mb-4">
-        <div class="card-body">
-          <nav>
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-              <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#homepass-all" role="tab" aria-controls="homepass-all" aria-selected="true">Homepass</a>
-              <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#homepass-new" role="tab" aria-controls="homepass-new" aria-selected="false">Profile</a>
-              <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</a>
-            </div>
-          </nav>
-          <div class="tab-content">
-            <div class="tab-pane chart-area d-flex justify-content-center align-items-center active p-0" id="homepass-all">
-              <canvas id="dataRegional"></canvas>
-            </div>
-            <div class="tab-pane chart-area d-flex justify-content-center align-items-center p-0" id="homepass-new">
-              <canvas id="dataHomeNew"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
     <div class="col-md-12">
       <div class="card h-100 shadow mb-4">
         <div class="card-body">
           <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-              <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">MAP Online</a>
+              <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Regional</a>
               <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Production</a>
             </div>
           </nav>
           <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-              <div class="chart-area" style="height: 600px">
-                <canvas id="dataRegional"></canvas>
+              <div class="" style="">
+                <div class="row">
+                  <?php foreach ($region as $reg) : ?>
+                    <div class="col-md-4 my-4">
+                      <canvas height="250px" class="" id="dataRegional<?= str_replace(" ", "", $reg['region']) ?>"></canvas>
+                    </div>
+                  <?php endforeach ?>
+                </div>
+
               </div>
             </div>
 
@@ -276,5 +263,9 @@
       </div>
     </div>
   </div>
+
+  <!-- <div class="embed-responsive embed-responsive-16by9">
+    <iframe src="https://kmlviewer.com/" class="embed-responsive-item" allowfullscreen></iframe>
+  </div> -->
 
 </div>

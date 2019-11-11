@@ -6,7 +6,7 @@
 
   <div class="row mt-5 justify-content-center">
     <div class="col-md-8">
-      <div class="card rounded-0" style="">
+      <div class="card" style="">
         <div class="row">
           <div class="col-md-4">
             <img src="<?= base_url('assets/img/profile/') . $user['image'] ?>" class="card-img" alt="">
@@ -23,5 +23,4 @@
       </div>
     </div>
   </div>
-
 </div>

@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <h1 class="h3"><?= $title ?></h1>
+  <h1 class="h3"><?= $title . " | " . ini_get('upload_max_filesize') ?></h1>
 
   <div class="row mt-5">
     <div class="col-md-12">

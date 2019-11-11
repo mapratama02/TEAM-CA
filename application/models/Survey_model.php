@@ -17,11 +17,28 @@ class Survey_model extends CI_Model
 
   public function getSummary($region, $kota, $kecamatan, $kelurahan)
   {
-    $this->db->like('region', $region);
-    $this->db->like('kota', $kota);
-    $this->db->like('kecamatan', $kecamatan);
-    $this->db->like('kelurahan', $kelurahan);
-    $hasil = $this->db->get('summary');
+    if ($region != '' || $kota != '' || $kecamatan != '' || $kelurahan != '') {
+      $this->db->like('region', $region);
+      $this->db->like('kota', $kota);
+      $this->db->like('kecamatan', $kecamatan);
+      $this->db->like('kelurahan', $kelurahan);
+      $hasil = $this->db->get('summary');
+    } elseif ($kota != '' || $kecamatan != '' || $kelurahan != '') {
+      $this->db->like('kota', $kota);
+      $this->db->like('kecamatan', $kecamatan);
+      $this->db->like('kelurahan', $kelurahan);
+      $hasil = $this->db->get('summary');
+    } elseif ($kecamatan != '' || $kelurahan != '') {
+      $this->db->like('kecamatan', $kecamatan);
+      $this->db->like('kelurahan', $kelurahan);
+      $hasil = $this->db->get('summary');
+    } elseif ($kelurahan != '') {
+      $this->db->like('kelurahan', $kelurahan);
+      $hasil = $this->db->get('summary');
+    } else {
+      $hasil = $this->db->get('summary');
+    };
+
     return $hasil->result();
   }
 

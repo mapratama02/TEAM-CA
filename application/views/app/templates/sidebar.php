@@ -1,17 +1,13 @@
 <!-- Sidebar -->
-<ul class="navbar-nav sidebar sidebar-dark accordion" style="background: linear-gradient(slateblue, dodgerblue, aqua)" id="accordionSidebar">
+<ul class="navbar-nav sidebar sidebar-dark bg-primary accordion" style="" id="accordionSidebar">
 
   <!-- Sidebar - Brand -->
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="javascript:void(0)">
     <div class="sidebar-brand-icon">
-      <!-- <i class="fas fa-laugh-wink"></i> -->
-      <img src="http://mncplaysurabaya99.id.tc/wp-content/uploads/sites/447/2016/03/MNC_Playmedia-home.png" height="40" alt="">
+      <img src="http://mncplaysurabaya99.id.tc/wp-content/uploads/sites/447/2016/03/MNC_Playmedia-home.png" height="35" alt="">
     </div>
     <div class="sidebar-brand-text mx-3">TEAM CA</div>
   </a>
-
-  <!-- Divider -->
-  <!-- <hr class="sidebar-divider my-0"> -->
 
   <?php
   $role_id = $this->session->userdata('role');
@@ -47,22 +43,19 @@
           <span><?= $sm['title'] ?></span></a>
         </li>
       <?php endforeach ?>
-      <!-- <hr class="sidebar-divider my-2"> -->
+      <hr class="sidebar-divider my-2">
 
     <?php endforeach ?>
 
     <!-- Divider -->
-    <hr class="sidebar-divider my-2">
+    <!-- <hr class="sidebar-divider my-2"> -->
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
       <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
 
 </ul>
-<!-- End of Sidebar -->
 
-<!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
 
-  <!-- Main Content -->
   <div id="content">

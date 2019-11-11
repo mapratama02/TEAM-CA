@@ -7,6 +7,7 @@
     <div class="col-md-12">
       <div class="card border-left-primary">
         <div class="card-body">
+          <?= $this->session->flashdata('msg') ?>
           <div class="row">
             <div class="col-md-3">
               <div class="form-group">
@@ -41,7 +42,10 @@
               </div>
             </div>
           </div>
-          <button id="summary_search" disabled type="button" class="btn btn-primary">Search</button>
+          <div class="form-group">
+            <button id="summary_search" type="button" class="btn btn-primary">Search</button>
+            <div id="export" class="mt-3"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -71,20 +75,11 @@
             <th>HP All</th>
             <th>HP MAP</th>
             <th>Color</th>
-            <!-- <th>Kepemilikan Penghuni</th>
-                    <th>Metode Pembangunan</th>
-                    <th>Akses Penjualan</th>
-                    <th>Kompetitor</th>
-                    <th>Provider</th>
-                    <th>Biaya Langganan</th>
-                    <th>Nama Surveyor</th>
-                    <th>Nomor HP</th>
-                    <th>BOD Number</th>
-                    <th>Mitra Partnership</th> -->
-            <!-- <th>Rekomendasi Roll-Back</th> -->
-            <?php if ($this->session->userdata('role') != 3 && $this->session->userdata('role') != 4) : ?>
-              <th colspan="2">Action</th>
+            <?php if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) : ?>
+              <th>Action</th>
+              <th></th>
             <?php endif ?>
+            <th>Attachment</th>
           </tr>
         </thead>
         <tbody>

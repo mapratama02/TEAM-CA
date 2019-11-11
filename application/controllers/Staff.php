@@ -9,6 +9,7 @@ class Staff extends CI_Controller
   {
     parent::__construct();
     $this->load->model('Survey_model', 'survey');
+    logged_in();
   }
 
   public function index()
@@ -93,7 +94,7 @@ class Staff extends CI_Controller
 
       if ($variable > 0) {
         if (isset($_FILES['attachment']['name'])) {
-          $config['upload_path']          = './assets/kml/';
+          $config['upload_path']          = './assets/img/staff_upload/';
           $config['allowed_types']        = 'kml|png|jpg|jpeg';
 
           $this->load->library('upload', $config);
@@ -126,7 +127,8 @@ class Staff extends CI_Controller
               'biaya_langganan' => $biaya,
               'nama_surveyor' => $surveyor,
               'no_hp' => $telepon,
-              'uniq_combi' => $kompleks . '/' . $kelurahan[1] . '/' . $kelurahan[1] . '/' . $kota[1] . '/' . $rw . '/' . $tingkat_potensial . '/' . $jumlah
+              'uniq_combi' => $kompleks . '/' . $kelurahan[1] . '/' . $kelurahan[1] . '/' . $kota[1] . '/' . $rw . '/' . $tingkat_potensial . '/' . $jumlah,
+              'attachment' => $this->upload->data('file_name')
             ];
             $this->db->insert('data_temporary', $data);
 
@@ -142,7 +144,6 @@ class Staff extends CI_Controller
             $config['mailtype'] = 'html';
             $config['charset'] = 'utf-8';
             $this->email->initialize($config);
-
             $this->email->set_newline("\r\n");
 
             $admin = $this->db->get_where('user', ['role' => 1])->result_array();
@@ -174,7 +175,7 @@ class Staff extends CI_Controller
         }
       } else {
         if (isset($_FILES['attachment']['name'])) {
-          $config['upload_path']          = './assets/kml/';
+          $config['upload_path']          = './assets/img/staff_upload/';
           $config['allowed_types']        = 'kml|png|jpg|jpeg';
 
           $this->load->library('upload', $config);
@@ -207,28 +208,25 @@ class Staff extends CI_Controller
               'biaya_langganan' => $biaya,
               'nama_surveyor' => $surveyor,
               'no_hp' => $telepon,
-              'uniq_combi' => $kompleks . '/' . $kelurahan[1] . '/' . $kelurahan[1] . '/' . $kota[1] . '/' . $rw . '/' . $tingkat_potensial . '/' . $jumlah
+              'uniq_combi' => $kompleks . '/' . $kelurahan[1] . '/' . $kelurahan[1] . '/' . $kota[1] . '/' . $rw . '/' . $tingkat_potensial . '/' . $jumlah,
+              'attachment' => $this->upload->data('file_name')
             ];
             $this->db->insert('summary', $data);
 
             // Email Sender
-
             $admin = $this->db->get_where('user', ['role' => 1])->result_array();
 
             $this->load->library('email');
-            $config = array(
-              'protocol' => 'smtp',
-              'smtp_host' => 'ssl://smtp.googlemail.com',
-              'smtp_port' => 465,
-              'smtp_user' => 'mapratama02@gmail.com',
-              'smtp_pass' => 'Pratama02',
-              'mailtype'  => 'html',
-              'charset' => 'iso-8859-1',
-              'wordwrap' => TRUE,
-            );
+            $config = array();
+            $config['protocol'] = 'smtp';
+            $config['smtp_host'] = 'ssl://smtp.googlemail.com';
+            $config['smtp_user'] = 'mapratama02@gmail.com';
+            $config['smtp_pass'] = 'Pratama02';
+            $config['smtp_port'] = 465;
+            $config['mailtype'] = 'html';
+            $config['charset'] = 'utf-8';
             $this->email->initialize($config);
             $this->email->set_mailtype("html");
-            $this->email->set_newline("\r\n");
 
             foreach ($admin as $email) {
               $this->email->clear();
@@ -315,10 +313,22 @@ class Staff extends CI_Controller
               $this->email->attach(FCPATH . 'assets/kml/' . $_FILES['attachment']['name']);
               $this->email->send();
             }
-
             // unlink(FCPATH . 'assets/kml/' . $this->upload->data('file_name'));
 
-            redirect('staff/form_survey');
+            $this->load->library('ftp');
+
+            $config['hostname'] = "files.000webhost.com";
+            $config['username'] = "teamca";
+            $config['password'] = "teamcamnc";
+            $config['debug']    = TRUE;
+
+            $this->ftp->connect($config);
+
+            $this->ftp->upload('./assets/staff_upload/' . $this->upload->data('file_name'), '/public_html/staff_upload/' . $this->upload->data('file_name'), 'ascii', 0775);
+
+            $this->ftp->close();
+
+            redirect('staff/survey');
           } else {
             $error = array('error' => $this->upload->display_errors());
             print_r($error);
@@ -371,13 +381,13 @@ class Staff extends CI_Controller
       'bod_number' => $data['bod_number'],
       'mitra_partnership' => $data['mitra_partnership'],
       'uniq_combi' => $data['uniq_combi'],
+      'attachment' => $data['attachment']
     ];
 
     $this->db->where('region', $region);
     $this->db->where('kecamatan', $kecamatan);
     $this->db->where('kelurahan', $kelurahan);
     $this->db->where('rw', $rw);
-    $this->db->where('owner_type', $owner_type);
     $this->db->update('summary', $object);
 
     $this->db->delete('data_temporary', ['region' => $region, 'kota' => $kota, 'kecamatan' => $kecamatan, 'kelurahan' => $kelurahan, 'rw' => $rw]);
@@ -394,7 +404,7 @@ class Staff extends CI_Controller
     $rw = $this->input->get('rw');
     $owner_type = $this->input->get('owner_type');
 
-    $this->db->delete('data_temporary', ['region' => $region, 'kota' => $kota, 'kecamatan' => $kecamatan, 'kelurahan' => $kelurahan, 'rw' => $rw]);
+    $this->db->delete('data_temporary', ['region' => $region, 'kota' => $kota, 'kecamatan' => $kecamatan, 'kelurahan' => $kelurahan, 'rw' => $rw, 'owner_type' => $owner_type]);
     echo "Data baru telah di<i>delete</i>!";
   }
 

@@ -17,7 +17,7 @@
               </div>
             <?php endforeach ?>
             <div class="form-group">
-              <button id="filter" class="btn btn-primary badge-pill">Filter Data</button>
+              <button id="filter" class="btn btn-primary">Filter Data</button>
               <div id="export" class="mt-3"></div>
             </div>
           </div>
@@ -50,6 +50,7 @@
               <th>Action</th>
               <th></th>
             <?php endif ?>
+            <th>Attachment</th>
           </tr>
         </thead>
         <tbody>

@@ -65,6 +65,6 @@ class Auth extends CI_Controller
 
   public function blocked()
   {
-    echo "Access Blocked!";
+    $this->load->view('blocked');
   }
 }

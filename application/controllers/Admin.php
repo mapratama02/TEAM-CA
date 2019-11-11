@@ -15,7 +15,7 @@ class Admin extends CI_Controller
   {
     $data['title'] = 'Dashboard';
     $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-    $data['region'] = $this->db->query("SELECT `region` FROM `summary` GROUP BY `region`")->result_array();
+    $data['region'] = $this->db->query("SELECT `id_report`, `region` FROM `summary` GROUP BY `region`")->result_array();
     $data['label_color'] = $this->db->query("SELECT `color` FROM `map_online` GROUP BY `color`")->result_array();
     $this->load->view('app/templates/header', $data);
     $this->load->view('app/templates/sidebar', $data);

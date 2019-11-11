@@ -4,24 +4,23 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Leader extends CI_Controller
 {
+  private $filename = "import_file";
 
   public function __construct()
   {
     parent::__construct();
     $this->load->library('form_validation');
     $this->load->model('Survey_model', 'survey');
+    $this->load->model('Import_model', 'import');
+    logged_in();
   }
 
   public function export()
   {
-    $data['region'] = $this->input->get('region');
-    $data['kota'] = $this->input->get('kota');
-    $data['kecamatan'] = $this->input->get('kecamatan');
     $kelurahan = $this->input->get('kelurahan');
     $kecamatan = $this->input->get('kecamatan');
     $kota = $this->input->get('kota');
     $region = $this->input->get('region');
-    $data['kelurahan'] = $this->input->get('kelurahan');
 
     header("Content-type: application/vnd-ms-excel");
     header("Content-Disposition: attachment; filename=Data Region " . $region . ".xls");
@@ -44,6 +43,258 @@ class Leader extends CI_Controller
     $this->load->view('app/leader/export', $data);
   }
 
+  public function import()
+  {
+    $data['title'] = "Row Data Update";
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    $this->load->view('app/templates/header', $data);
+    $this->load->view('app/templates/sidebar', $data);
+    $this->load->view('app/templates/navbar', $data);
+    $this->load->view('app/leader/import', $data);
+    $this->load->view('app/templates/footer', $data);
+  }
+
+  public function progress_delete()
+  {
+    $dir = $this->input->post('dir');
+
+    $this->load->library('ftp');
+    $config['hostname'] = "files.000webhost.com";
+    $config['username'] = "teamca";
+    $config['password'] = "teamcamnc";
+    $config['debug']    = TRUE;
+    $this->ftp->connect($config);
+
+    $this->ftp->delete_file('/public_html/kml/' . $dir);
+
+    $this->ftp->close();
+
+    $this->session->set_flashdata('message', '
+        <div class="alert alert-success">
+          <span>Deleted!</span>
+        </div>
+        ');
+    redirect("leader/kml_viewer");
+  }
+
+  public function progress_upload()
+  {
+
+    $config = array(
+      'upload_path'   => './assets/kml/',
+      'allowed_types' => '*',
+      'overwrite'     => true,
+      'max_size'      => 30000
+    );
+
+    $this->load->library('upload', $config);
+
+    if ($this->upload->do_upload('upload_kml')) {
+      if ($this->upload->data('file_ext') == '.kml') {
+        // print_r($this->upload->data());
+        $this->load->library('ftp');
+        $config['hostname'] = "files.000webhost.com";
+        $config['username'] = "teamca";
+        $config['password'] = "teamcamnc";
+        $config['debug']    = TRUE;
+        $this->ftp->connect($config);
+
+        $this->ftp->upload('./assets/kml/' . $this->upload->data('file_name'), '/public_html/kml/' . $this->upload->data('file_name'), 'ascii', 0775);
+
+        $this->ftp->close();
+
+        $this->session->set_flashdata('message', '
+        <div class="alert alert-success">
+          <span>Uploaded!</span>
+        </div>
+        ');
+        redirect("leader/kml_viewer");
+      } else {
+        echo "Your file extension wan not .kml";
+        $this->session->set_flashdata('message', '
+        <div class="alert alert-danger">
+          <span>Your file extension wan not .kml!</span>
+        </div>
+        ');
+        unlink(FCPATH . 'assets/kml/' . $this->upload->data('file_name'));
+        redirect("leader/kml_viewer");
+      }
+    } else {
+      // echo "Error while uploading :(";
+      print_r($this->upload->display_errors());
+    }
+  }
+
+  public function summary_delete($id)
+  {
+    if ($this->session->userdata('role') != 1 && $this->session->userdata('role') != 5) {
+      redirect('auth/blocked');
+    } else {
+      $this->db->delete('summary', ['id_report' => $id]);
+      $this->session->set_flashdata('msg', '<div class="alert alert-success" style="margin: 10px 0;">Data successfully deleted from out record!</div>');
+      redirect('user/data_survey_region');
+    }
+  }
+
+  public function import_progress()
+  {
+    $con_data = array();
+    $allowed = array('csv');
+    $filename = $_FILES['file']['name'];
+    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+    $this->load->library('CSVReader');
+    $csvData = $this->csvreader->parse_csv($_FILES['file']['tmp_name']);
+
+    if (in_array($ext, $allowed)) {
+      if (!empty($csvData)) {
+        foreach ($csvData as $row) {
+          $con_data = array(
+            'id_report'           => $row['id_report'],
+            'timestamp'           => $row['timestamp'],
+            'area_id'             => $row['area_id'],
+            'map_id'              => $row['map_id'],
+            'region'              => $row['region'],
+            'kota'                => $row['kota'],
+            'kecamatan'           => $row['kecamatan'],
+            'kelurahan'           => $row['kelurahan'],
+            'kompleks'            => $row['kompleks'],
+            'owner_type'          => $row['owner_type'],
+            'rw'                  => $row['rw'],
+            'type_a'              => $row['type_a'],
+            'type_b'              => $row['type_b'],
+            'type_c'              => $row['type_c'],
+            'type_d'              => $row['type_d'],
+            'type_soho'           => $row['type_soho'],
+            'hp_all'              => $row['hp_all'],
+            'hp_map'              => $row['hp_map'],
+            'color'               => $row['color'],
+            'kendaraan_penghuni'  => $row['kendaraan_penghuni'],
+            'metode_pembangunan'  => $row['metode_pembangunan'],
+            'akses_penjualan'     => $row['akses_penjualan'],
+            'kompetitor'          => $row['kompetitor'],
+            'provider'            => $row['provider'],
+            'biaya_langganan'     => $row['biaya_langganan'],
+            'nama_surveyor'       => $row['nama_surveyor'],
+            'no_hp'               => $row['no_hp'],
+            'bod_number'          => $row['bod_number'],
+            'mitra_partnership'   => $row['mitra_partnership'],
+          );
+
+          // $this->db->where('id_report', $row['id_report']);
+          $this->db->insert('summary', $con_data);
+        }
+
+        $this->session->set_flashdata('message', '
+          <div class="alert alert-success my-1">
+          <p>Uploaded!</p>
+          </div>
+        ');
+        redirect('leader/import');
+      } else {
+        $this->session->set_flashdata('message', '
+          <div class="alert alert-danger my-1">
+          <p>The file has no data!</p>
+          </div>
+        ');
+        redirect("leader/import");
+      }
+    } else {
+      $this->session->set_flashdata('message', '
+          <div class="alert alert-danger my-1">
+          <p>The Extension of file is not <kbd>.csv</kbd> !</p>
+          <p class="m-0">Format you upload: <kbd>.' . $ext . '</kbd></p>
+          </div>
+        ');
+      redirect("leader/import");
+    }
+  }
+
+  public function import_update_progress()
+  {
+    $con_data = array();
+    $allowed = array('csv');
+    $filename = $_FILES['file']['name'];
+    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+    $this->load->library('CSVReader');
+    $csvData = $this->csvreader->parse_csv($_FILES['file']['tmp_name']);
+
+    if (in_array($ext, $allowed)) {
+      if (!empty($csvData)) {
+        foreach ($csvData as $row) {
+          $con_data = array(
+            // 'id_report'           => $row['id_report'],
+            'timestamp'           => $row['timestamp'],
+            'area_id'             => $row['area_id'],
+            'map_id'              => $row['map_id'],
+            'region'              => $row['region'],
+            'kota'                => $row['kota'],
+            'kecamatan'           => $row['kecamatan'],
+            'kelurahan'           => $row['kelurahan'],
+            'kompleks'            => $row['kompleks'],
+            'owner_type'          => $row['owner_type'],
+            'rw'                  => $row['rw'],
+            'type_a'              => $row['type_a'],
+            'type_b'              => $row['type_b'],
+            'type_c'              => $row['type_c'],
+            'type_d'              => $row['type_d'],
+            'type_soho'           => $row['type_soho'],
+            'hp_all'              => $row['hp_all'],
+            'hp_map'              => $row['hp_map'],
+            'color'               => $row['color'],
+            'kendaraan_penghuni'  => $row['kendaraan_penghuni'],
+            'metode_pembangunan'  => $row['metode_pembangunan'],
+            'akses_penjualan'     => $row['akses_penjualan'],
+            'kompetitor'          => $row['kompetitor'],
+            'provider'            => $row['provider'],
+            'biaya_langganan'     => $row['biaya_langganan'],
+            'nama_surveyor'       => $row['nama_surveyor'],
+            'no_hp'               => $row['no_hp'],
+            'bod_number'          => $row['bod_number'],
+            'mitra_partnership'   => $row['mitra_partnership'],
+          );
+
+          $this->db->where('id_report', $row['id_report']);
+          $this->db->update('summary', $con_data);
+        }
+
+        $this->session->set_flashdata('message', '
+          <div class="alert alert-success my-1">
+          <p>Uploaded!</p>
+          </div>
+        ');
+        redirect('leader/import');
+      } else {
+        $this->session->set_flashdata('message', '
+          <div class="alert alert-danger my-1">
+          <p>The file has no data!</p>
+          </div>
+        ');
+        redirect("leader/import");
+      }
+    } else {
+      $this->session->set_flashdata('message', '
+          <div class="alert alert-danger my-1">
+          <p>The Extension of file is not <kbd>.csv</kbd> !</p>
+          <p class="m-0">Format you upload: <kbd>.' . $ext . '</kbd></p>
+          </div>
+        ');
+      redirect("leader/import");
+    }
+  }
+
+  public function import_update()
+  {
+    $data['title'] = "Row Data Update";
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    $this->load->view('app/templates/header', $data);
+    $this->load->view('app/templates/sidebar', $data);
+    $this->load->view('app/templates/navbar', $data);
+    $this->load->view('app/leader/import_update', $data);
+    $this->load->view('app/templates/footer', $data);
+  }
+
   public function summary_edit($id)
   {
     if ($this->session->userdata('role') != 1 && $this->session->userdata('role') != 5) {
@@ -51,6 +302,7 @@ class Leader extends CI_Controller
     } else {
       $this->form_validation->set_rules('kompleks', 'Komplek', 'required');
       $this->form_validation->set_rules('rw', 'RW/Developer', 'required');
+
       // $this->form_validation->set_rules('prop[]', 'Property', 'required');
       // $this->form_validation->set_rules('klasifikasi[]', 'Klasifikasi Tipe Rumah', 'required');
       // $this->form_validation->set_rules('kepemilikan_penghuni', 'Kepemilikan Penghuni', 'required');
@@ -116,6 +368,8 @@ class Leader extends CI_Controller
         $mitra_partnership = $this->input->post('mitra_partnership');
 
         $data = [
+          'area_id' => $area_id,
+          'map_id' => $map_id,
           'kompleks' => $kompleks,
           'owner_type' => $owner_type,
           'rw' => $rw,
@@ -143,8 +397,83 @@ class Leader extends CI_Controller
         $this->db->update('summary', $data);
         $this->session->set_flashdata('msg', '<div class="alert alert-success" style="margin: 10px 0;">Data for ' . anchor('leader/summary_view/' . $id, $id) . ' updated successfully!</div>');
 
-        redirect('user/data_survey_color');
+        redirect('user/data_survey_region');
       }
+    }
+  }
+
+  public function kml_viewer()
+  {
+    $data['title'] = "KML Viewer";
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+    $this->load->library('ftp');
+
+    $config['hostname'] = "files.000webhost.com";
+    $config['username'] = "teamca";
+    $config['password'] = "teamcamnc";
+    $config['debug']    = TRUE;
+
+    $this->ftp->connect($config);
+    $data['dir'] = $this->ftp->list_files('/public_html/kml');
+    $this->ftp->close();
+
+    $this->load->view('app/templates/header', $data);
+    $this->load->view('app/templates/sidebar', $data);
+    $this->load->view('app/templates/navbar', $data);
+    $this->load->view('app/leader/kml_viewer', $data);
+    $this->load->view('app/templates/footer', $data);
+  }
+
+  public function ex_parsing_kml()
+  {
+    $this->load->helper('xml');
+    $file = base_url() . 'assets/kml/test.kml';
+
+    $xmlRaw = file_get_contents($file);
+    $this->load->library('simplexml');
+
+    $xmlData = $this->simplexml->xml_parse($xmlRaw);
+    foreach ($xmlData['Folder']['Placemark'] as $key => $value) {
+      $data = array();
+      $string = "<?xml version='1.0'?> " . str_replace("<br>", "", $value['description']) . "</table>";
+
+      $xml = simplexml_load_string($string);
+      $data['name'] = $value['name'];
+      $data['visibility'] = $value['visibility'];
+      $data['open'] = $value['open'][0];
+      $data['linestyle_color'] = $value['Style']['LineStyle']['color'];
+      $data['linestyle_width'] = $value['Style']['LineStyle']['width'];
+      $data['polystyle_fill'] = $value['Style']['PolyStyle']['fill'];
+      $data['polystyle_outline'] = $value['Style']['PolyStyle']['outline'];
+      $data['polystyle_color'] = $value['Style']['PolyStyle']['color'];
+      $data['extrude'] = $value['Polygon']['extrude'];
+      $data['altitudemode'] = $value['Polygon']['altitudeMode'];
+      $data['tessellate'] = $value['Polygon']['tessellate'];
+      $data['coordinates'] = $value['Polygon']['outerBoundaryIs']['LinearRing']['coordinates'];
+
+      foreach ($xml->tr as $kunci => $isi) {
+        $data2 = (string) $isi->td[1];
+        $data['desc_' . strtolower($isi->td[0])] = $data2;
+      }
+
+      echo "<pre>";
+      print_r($data);
+      echo "</pre>";
+
+      /* Remove comment if you want save to database (this is sample only for POSTGRE [postgis])
+		$coor = $value['Polygon']['outerBoundaryIs']['LinearRing']['coordinates'];
+		$coors = explode(',0', $coor);
+		$coordinates = '';
+		foreach ($coors as $c) {
+			if(!empty($c)){
+				$coorxy = explode(',', $c);
+				$coordinates[] = $coorxy[1].' '.$coorxy[0];
+			}
+		};
+		$this->db->set('coordinates',"ST_GeomFromText('POLYGON((".implode(',',$coordinates)."))',4326)",false);
+		$this->db->insert('kml_pg', $data);
+		*/
     }
   }
 }
