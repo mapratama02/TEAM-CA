@@ -27,8 +27,8 @@
               <th><?= $id++ ?></th>
               <td><?= $m['menu'] ?></td>
               <td>
-                <a href="" class="badge badge-success">Edit</a>
-                <a href="" class="badge badge-danger">Delete</a>
+                <a href="#" data-toggle="modal" data-target="#modalEditMenu" data-id="<?= $m['id'] ?>" data-name="<?= $m['menu'] ?>" class="badge badge-success">Edit</a>
+                <a href="<?= base_url('programmer/menu_builder_delete/') . $m['id'] ?>" class="badge badge-danger">Delete</a>
               </td>
             </tr>
           <?php endforeach ?>
@@ -54,6 +54,31 @@
         <div class="modal-body">
           <div class="form-group">
             <input type="text" name="menu" id="" placeholder="Name the menu..." class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modalEditMenu" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form action="<?= base_url('programmer/menu_builder_edit/') ?>" method="post">
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Menu</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <input type="hidden" name="id" id="idmenu" placeholder="" class="form-control">
+            <input type="text" name="menu" id="namemenu" placeholder="Name the menu..." class="form-control">
           </div>
         </div>
         <div class="modal-footer">

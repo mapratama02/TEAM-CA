@@ -1,10 +1,10 @@
 <div class="container-fluid">
-  <h1 class="h3"><?= $title . " | " . ini_get('upload_max_filesize') ?></h1>
+  <h1 class="h3"><?= $title . " &mdash; " . $_SERVER['HTTP_HOST'] ?></h1>
 
   <div class="row mt-5">
     <div class="col-md-12">
       <a href="" data-toggle="modal" data-target="#modalAddSubMenu" class="btn btn-primary mb-3">Add new submenu</a>
-      <table class="table">
+      <table class="table table-hover table-striped table-responsive-md">
         <thead>
           <th>#</th>
           <th>Title</th>
@@ -33,7 +33,7 @@
               </td>
               <td>
                 <a href="<?= base_url('programmer/submenu_edit/') . $sm['id'] ?>" class="badge badge-success">Edit</a>
-                <a href="" class="badge badge-danger">Delete</a>
+                <a href="<?= base_url('programmer/submenu_delete/') . $sm['id'] ?>" onclick="return confirm('Delete this submenu?\n<?= $sm['title'] ?>')" class="badge badge-danger">Delete</a>
               </td>
             </tr>
           <?php endforeach ?>

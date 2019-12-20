@@ -15,44 +15,395 @@ class Leader extends CI_Controller
     logged_in();
   }
 
+
   public function export()
   {
+    include APPPATH . 'third_party/PHPExcel.php';
     $kelurahan = $this->input->get('kelurahan');
     $kecamatan = $this->input->get('kecamatan');
     $kota = $this->input->get('kota');
     $region = $this->input->get('region');
 
-    header("Content-type: application/vnd-ms-excel");
-    header("Content-Disposition: attachment; filename=Data Region " . $region . ".xls");
-    $data['survey'] = $this->survey->getSummary($region, $kota, $kecamatan, $kelurahan);
-    $this->load->view('app/leader/export', $data);
+    $excel = new PHPExcel();
+
+    $excel->getProperties()
+      ->setCreator('TEAM CA')
+      ->setLastModifiedBy('TEAM CA')
+      ->setTitle("Data Region $region")
+      ->setSubject("Region")
+      ->setDescription("Report Data Region $region")
+      ->setKeywords("Survey Area");
+
+    // Header 
+    $excel->setActiveSheetIndex(0)->setCellValue('A1', 'id_report');
+    $excel->setActiveSheetIndex(0)->setCellValue('B1', 'timestamp');
+    $excel->setActiveSheetIndex(0)->setCellValue('C1', 'tanggal_survey');
+    $excel->setActiveSheetIndex(0)->setCellValue('D1', 'area_id');
+    $excel->setActiveSheetIndex(0)->setCellValue('E1', 'map_id');
+    $excel->setActiveSheetIndex(0)->setCellValue('F1', 'region');
+    $excel->setActiveSheetIndex(0)->setCellValue('G1', 'kota');
+    $excel->setActiveSheetIndex(0)->setCellValue('H1', 'kecamatan');
+    $excel->setActiveSheetIndex(0)->setCellValue('I1', 'kelurahan');
+    $excel->setActiveSheetIndex(0)->setCellValue('J1', 'kompleks');
+    $excel->setActiveSheetIndex(0)->setCellValue('K1', 'owner_type');
+    $excel->setActiveSheetIndex(0)->setCellValue('L1', 'rw');
+    $excel->setActiveSheetIndex(0)->setCellValue('M1', 'type_a');
+    $excel->setActiveSheetIndex(0)->setCellValue('N1', 'type_b');
+    $excel->setActiveSheetIndex(0)->setCellValue('O1', 'type_c');
+    $excel->setActiveSheetIndex(0)->setCellValue('P1', 'type_d');
+    $excel->setActiveSheetIndex(0)->setCellValue('Q1', 'type_soho');
+    $excel->setActiveSheetIndex(0)->setCellValue('R1', 'hp_all');
+    $excel->setActiveSheetIndex(0)->setCellValue('S1', 'hp_map');
+    $excel->setActiveSheetIndex(0)->setCellValue('T1', 'color');
+    $excel->setActiveSheetIndex(0)->setCellValue('U1', 'metode_pembangunan');
+    $excel->setActiveSheetIndex(0)->setCellValue('V1', 'kendaraan_penghuni');
+    $excel->setActiveSheetIndex(0)->setCellValue('W1', 'akses_penjualan');
+    $excel->setActiveSheetIndex(0)->setCellValue('X1', 'kompetitor');
+    $excel->setActiveSheetIndex(0)->setCellValue('Y1', 'provider');
+    $excel->setActiveSheetIndex(0)->setCellValue('Z1', 'biaya_langganan');
+    $excel->setActiveSheetIndex(0)->setCellValue('AA1', 'nama_surveyor');
+    $excel->setActiveSheetIndex(0)->setCellValue('AB1', 'no_hp');
+    $excel->setActiveSheetIndex(0)->setCellValue('AC1', 'jenis_properti');
+    $excel->setActiveSheetIndex(0)->setCellValue('AD1', 'bod_number');
+    $excel->setActiveSheetIndex(0)->setCellValue('AE1', 'mitra_partnership');
+    $excel->setActiveSheetIndex(0)->setCellValue('AF1', 'uniq_combi');
+
+    $survey = $this->survey->getSummary($region, $kota, $kecamatan, $kelurahan);
+    $numrows = 2;
+    foreach ($survey as $data) {
+      $excel->setActiveSheetIndex(0)->setCellValue('A' . $numrows, $data->id_report);
+      $excel->setActiveSheetIndex(0)->setCellValue('B' . $numrows, $data->timestamp);
+      $excel->setActiveSheetIndex(0)->setCellValue('C' . $numrows, $data->tanggal_survey);
+      $excel->setActiveSheetIndex(0)->setCellValue('D' . $numrows, $data->area_id);
+      $excel->setActiveSheetIndex(0)->setCellValue('E' . $numrows, $data->map_id);
+      $excel->setActiveSheetIndex(0)->setCellValue('F' . $numrows, $data->region);
+      $excel->setActiveSheetIndex(0)->setCellValue('G' . $numrows, $data->kota);
+      $excel->setActiveSheetIndex(0)->setCellValue('H' . $numrows, $data->kecamatan);
+      $excel->setActiveSheetIndex(0)->setCellValue('I' . $numrows, $data->kelurahan);
+      $excel->setActiveSheetIndex(0)->setCellValue('J' . $numrows, $data->kompleks);
+      $excel->setActiveSheetIndex(0)->setCellValue('K' . $numrows, $data->owner_type);
+      $excel->setActiveSheetIndex(0)->setCellValue('L' . $numrows, $data->rw);
+      $excel->setActiveSheetIndex(0)->setCellValue('M' . $numrows, $data->type_a);
+      $excel->setActiveSheetIndex(0)->setCellValue('N' . $numrows, $data->type_b);
+      $excel->setActiveSheetIndex(0)->setCellValue('O' . $numrows, $data->type_c);
+      $excel->setActiveSheetIndex(0)->setCellValue('P' . $numrows, $data->type_d);
+      $excel->setActiveSheetIndex(0)->setCellValue('Q' . $numrows, $data->type_soho);
+      $excel->setActiveSheetIndex(0)->setCellValue('R' . $numrows, $data->hp_all);
+      $excel->setActiveSheetIndex(0)->setCellValue('S' . $numrows, $data->hp_map);
+      $excel->setActiveSheetIndex(0)->setCellValue('T' . $numrows, $data->color);
+      $excel->setActiveSheetIndex(0)->setCellValue('U' . $numrows, $data->metode_pembangunan);
+      $excel->setActiveSheetIndex(0)->setCellValue('V' . $numrows, $data->kendaraan_penghuni);
+      $excel->setActiveSheetIndex(0)->setCellValue('W' . $numrows, $data->akses_penjualan);
+      $excel->setActiveSheetIndex(0)->setCellValue('X' . $numrows, $data->kompetitor);
+      $excel->setActiveSheetIndex(0)->setCellValue('Y' . $numrows, $data->provider);
+      $excel->setActiveSheetIndex(0)->setCellValue('Z' . $numrows, $data->biaya_langganan);
+      $excel->setActiveSheetIndex(0)->setCellValue('AA' . $numrows, $data->nama_surveyor);
+      $excel->setActiveSheetIndex(0)->setCellValue('AB' . $numrows, $data->no_hp);
+      $excel->setActiveSheetIndex(0)->setCellValue('AC' . $numrows, $data->jenis_properti);
+      $excel->setActiveSheetIndex(0)->setCellValue('AD' . $numrows, $data->bod_number);
+      $excel->setActiveSheetIndex(0)->setCellValue('AE' . $numrows, $data->mitra_partnership);
+      $excel->setActiveSheetIndex(0)->setCellValue('AF' . $numrows, $data->uniq_combi);
+      $numrows++;
+    }
+
+    $excel->getActiveSheet(0)->setTitle("Data $region");
+    $excel->setActiveSheetIndex(0);
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="Data Region ' . $region . '.xlsx"');
+    header('Cache-Control: max-age=0');
+
+    $write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+    $write->save('php://output');
   }
 
   public function export_color()
   {
+    include APPPATH . 'third_party/PHPExcel.php';
+
     $color = $this->input->get('color');
     $filter = explode(' ', $color);
 
-    header("Content-type: application/vnd-ms-excel");
-    header("Content-Disposition: attachment; filename=Data Color " . $color . ".xls");
+    $excel = new PHPExcel();
+
+    $excel->getProperties()
+      ->setCreator('TEAM CA')
+      ->setLastModifiedBy('TEAM CA')
+      ->setTitle("Data Color $color")
+      ->setSubject("Color")
+      ->setDescription("Report Data Color $color")
+      ->setKeywords("Survey Area");
+
+    // Header 
+    $excel->setActiveSheetIndex(0)->setCellValue('A1', 'id_report');
+    $excel->setActiveSheetIndex(0)->setCellValue('B1', 'timestamp');
+    $excel->setActiveSheetIndex(0)->setCellValue('C1', 'tanggal_survey');
+    $excel->setActiveSheetIndex(0)->setCellValue('D1', 'area_id');
+    $excel->setActiveSheetIndex(0)->setCellValue('E1', 'map_id');
+    $excel->setActiveSheetIndex(0)->setCellValue('F1', 'region');
+    $excel->setActiveSheetIndex(0)->setCellValue('G1', 'kota');
+    $excel->setActiveSheetIndex(0)->setCellValue('H1', 'kecamatan');
+    $excel->setActiveSheetIndex(0)->setCellValue('I1', 'kelurahan');
+    $excel->setActiveSheetIndex(0)->setCellValue('J1', 'kompleks');
+    $excel->setActiveSheetIndex(0)->setCellValue('K1', 'owner_type');
+    $excel->setActiveSheetIndex(0)->setCellValue('L1', 'rw');
+    $excel->setActiveSheetIndex(0)->setCellValue('M1', 'type_a');
+    $excel->setActiveSheetIndex(0)->setCellValue('N1', 'type_b');
+    $excel->setActiveSheetIndex(0)->setCellValue('O1', 'type_c');
+    $excel->setActiveSheetIndex(0)->setCellValue('P1', 'type_d');
+    $excel->setActiveSheetIndex(0)->setCellValue('Q1', 'type_soho');
+    $excel->setActiveSheetIndex(0)->setCellValue('R1', 'hp_all');
+    $excel->setActiveSheetIndex(0)->setCellValue('S1', 'hp_map');
+    $excel->setActiveSheetIndex(0)->setCellValue('T1', 'color');
+    $excel->setActiveSheetIndex(0)->setCellValue('U1', 'metode_pembangunan');
+    $excel->setActiveSheetIndex(0)->setCellValue('V1', 'kendaraan_penghuni');
+    $excel->setActiveSheetIndex(0)->setCellValue('W1', 'akses_penjualan');
+    $excel->setActiveSheetIndex(0)->setCellValue('X1', 'kompetitor');
+    $excel->setActiveSheetIndex(0)->setCellValue('Y1', 'provider');
+    $excel->setActiveSheetIndex(0)->setCellValue('Z1', 'biaya_langganan');
+    $excel->setActiveSheetIndex(0)->setCellValue('AA1', 'nama_surveyor');
+    $excel->setActiveSheetIndex(0)->setCellValue('AB1', 'no_hp');
+    $excel->setActiveSheetIndex(0)->setCellValue('AC1', 'jenis_properti');
+    $excel->setActiveSheetIndex(0)->setCellValue('AD1', 'bod_number');
+    $excel->setActiveSheetIndex(0)->setCellValue('AE1', 'mitra_partnership');
 
     for ($i = 0; $i < count($filter); $i++) {
       $this->db->or_like('color', $filter[$i]);
     }
-    $data['survey'] = $this->db->get('summary')->result();
-    $this->load->view('app/leader/export', $data);
+
+    $survey = $this->db->get('summary')->result();
+    $numrows = 2;
+    foreach ($survey as $data) {
+      $excel->setActiveSheetIndex(0)->setCellValue('A' . $numrows, $data->id_report);
+      $excel->setActiveSheetIndex(0)->setCellValue('B' . $numrows, $data->timestamp);
+      $excel->setActiveSheetIndex(0)->setCellValue('C' . $numrows, $data->tanggal_survey);
+      $excel->setActiveSheetIndex(0)->setCellValue('D' . $numrows, $data->area_id);
+      $excel->setActiveSheetIndex(0)->setCellValue('E' . $numrows, $data->map_id);
+      $excel->setActiveSheetIndex(0)->setCellValue('F' . $numrows, $data->region);
+      $excel->setActiveSheetIndex(0)->setCellValue('G' . $numrows, $data->kota);
+      $excel->setActiveSheetIndex(0)->setCellValue('H' . $numrows, $data->kecamatan);
+      $excel->setActiveSheetIndex(0)->setCellValue('I' . $numrows, $data->kelurahan);
+      $excel->setActiveSheetIndex(0)->setCellValue('J' . $numrows, $data->kompleks);
+      $excel->setActiveSheetIndex(0)->setCellValue('K' . $numrows, $data->owner_type);
+      $excel->setActiveSheetIndex(0)->setCellValue('L' . $numrows, $data->rw);
+      $excel->setActiveSheetIndex(0)->setCellValue('M' . $numrows, $data->type_a);
+      $excel->setActiveSheetIndex(0)->setCellValue('N' . $numrows, $data->type_b);
+      $excel->setActiveSheetIndex(0)->setCellValue('O' . $numrows, $data->type_c);
+      $excel->setActiveSheetIndex(0)->setCellValue('P' . $numrows, $data->type_d);
+      $excel->setActiveSheetIndex(0)->setCellValue('Q' . $numrows, $data->type_soho);
+      $excel->setActiveSheetIndex(0)->setCellValue('R' . $numrows, $data->hp_all);
+      $excel->setActiveSheetIndex(0)->setCellValue('S' . $numrows, $data->hp_map);
+      $excel->setActiveSheetIndex(0)->setCellValue('T' . $numrows, $data->color);
+      $excel->setActiveSheetIndex(0)->setCellValue('U' . $numrows, $data->metode_pembangunan);
+      $excel->setActiveSheetIndex(0)->setCellValue('V' . $numrows, $data->kendaraan_penghuni);
+      $excel->setActiveSheetIndex(0)->setCellValue('W' . $numrows, $data->akses_penjualan);
+      $excel->setActiveSheetIndex(0)->setCellValue('X' . $numrows, $data->kompetitor);
+      $excel->setActiveSheetIndex(0)->setCellValue('Y' . $numrows, $data->provider);
+      $excel->setActiveSheetIndex(0)->setCellValue('Z' . $numrows, $data->biaya_langganan);
+      $excel->setActiveSheetIndex(0)->setCellValue('AA' . $numrows, $data->nama_surveyor);
+      $excel->setActiveSheetIndex(0)->setCellValue('AB' . $numrows, $data->no_hp);
+      $excel->setActiveSheetIndex(0)->setCellValue('AC' . $numrows, $data->jenis_properti);
+      $excel->setActiveSheetIndex(0)->setCellValue('AD' . $numrows, $data->bod_number);
+      $excel->setActiveSheetIndex(0)->setCellValue('AE' . $numrows, $data->mitra_partnership);
+
+      $numrows++;
+    }
+
+    $excel->getActiveSheet(0)->setTitle("Data $color");
+    $excel->setActiveSheetIndex(0);
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="Data Color ' . $color . '.xlsx"');
+    header('Cache-Control: max-age=0');
+
+    $write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+    $write->save('php://output');
   }
 
-  public function import()
-  {
-    $data['title'] = "Row Data Update";
-    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-    $this->load->view('app/templates/header', $data);
-    $this->load->view('app/templates/sidebar', $data);
-    $this->load->view('app/templates/navbar', $data);
-    $this->load->view('app/leader/import', $data);
-    $this->load->view('app/templates/footer', $data);
-  }
+  // public function import()
+  // {
+  //   $data['title'] = "Row Data Update";
+  //   $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+  //   $this->load->view('app/templates/header', $data);
+  //   $this->load->view('app/templates/sidebar', $data);
+  //   $this->load->view('app/templates/navbar', $data);
+  //   $this->load->view('app/leader/import', $data);
+  //   $this->load->view('app/templates/footer', $data);
+  // }
+
+  // public function import_upload_progress()
+  // {
+  //   $upload = $this->import->upload_file($this->filename);
+  //   if ($upload['result'] == "success") {
+  //     include APPPATH . 'third_party/PHPExcel.php';
+  //     $excelreader = new PHPExcel_Reader_Excel2007();
+  //     $loadexcel = $excelreader->load('assets/excel/' . $this->filename . '.xlsx');
+  //     $sheet = $loadexcel->getActiveSheet()->toArray(null, true, true, true);
+
+  //     $data = array();
+  //     $numrows = 1;
+  //     foreach ($sheet as $row) {
+  //       if ($numrows > 1) {
+  //         array_push($data, array(
+  //           'timestamp' => $row['B'],
+  //           'tanggal_survey' => $row['C'],
+  //           'area_id' => $row['D'],
+  //           'map_id' => $row['E'],
+  //           'region' => $row['F'],
+  //           'kota' => $row['G'],
+  //           'kecamatan' => $row['H'],
+  //           'kelurahan' => $row['I'],
+  //           'kompleks' => $row['J'],
+  //           'owner_type' => $row['K'],
+  //           'rw' => $row['L'],
+  //           'type_a' => $row['M'],
+  //           'type_b' => $row['N'],
+  //           'type_c' => $row['O'],
+  //           'type_d' => $row['P'],
+  //           'type_soho' => $row['Q'],
+  //           'hp_all' => $row['R'],
+  //           'hp_map' => $row['S'],
+  //           'color' => $row['T'],
+  //           'metode_pembangunan' => $row['U'],
+  //           'kendaraan_penghuni' => $row['V'],
+  //           'akses_penjualan' => $row['W'],
+  //           'kompetitor' => $row['X'],
+  //           'provider' => $row['Y'],
+  //           'biaya_langganan' => $row['Z'],
+  //           'nama_surveyor' => $row['AA'],
+  //           'no_hp' => $row['AB'],
+  //           'jenis_properti' => $row['AC'],
+  //           'bod_number' => $row['AD'],
+  //           'mitra_partnership' => $row['AE'],
+  //           'uniq_combi' => $row['AF'],
+  //         ));
+  //       }
+  //       $numrows++;
+  //     }
+
+  //     $this->import->insert_multiple($data);
+  //     $this->session->set_flashdata('message', '
+  //       <div class="alert alert-success">
+  //         <span>Inserted!</span>
+  //       </div>
+  //       ');
+  //     redirect('leader/row_data');
+  //   } else {
+  //     print_r($upload);
+  //     $this->session->set_flashdata('message', '
+  //       <div class="alert alert-danger">
+  //         <span>ERROR!</span>
+  //       </div>
+  //       ');
+  //     redirect('leader/row_data');
+  //   }
+  // }
+
+  // public function import_delete_progress()
+  // {
+  //   $upload = $this->import->upload_file($this->filename);
+  //   if ($upload['result'] == "success") {
+  //     include APPPATH . 'third_party/PHPExcel.php';
+  //     $excelreader = new PHPExcel_Reader_Excel2007();
+  //     $loadexcel = $excelreader->load('assets/excel/' . $this->filename . '.xlsx');
+  //     $sheet = $loadexcel->getActiveSheet()->toArray(null, true, true, true);
+
+  //     $numrows = 1;
+  //     foreach ($sheet as $row) {
+  //       if ($numrows > 1) {
+  //         $this->db->delete('summary', ['id_report' => $row['A']]);
+  //       }
+  //       $numrows++;
+  //     }
+
+  //     $this->session->set_flashdata('message', '
+  //       <div class="alert alert-success">
+  //         <span>Deleted!</span>
+  //       </div>
+  //       ');
+  //     redirect('leader/row_data');
+  //   }
+  // }
+
+  // public function import_up_to_date_progress()
+  // {
+  //   $upload = $this->import->upload_file($this->filename);
+  //   if ($upload['result'] == "success") {
+  //     include APPPATH . 'third_party/PHPExcel.php';
+  //     $excelreader = new PHPExcel_Reader_Excel2007();
+  //     $loadexcel = $excelreader->load('assets/excel/' . $this->filename . '.xlsx');
+  //     $sheet = $loadexcel->getActiveSheet()->toArray(null, true, true, true);
+
+  //     $numrows = 1;
+  //     foreach ($sheet as $row) {
+  //       if ($numrows > 1) {
+  //         $data = array(
+  //           'timestamp' => $row['B'],
+  //           'tanggal_survey' => $row['C'],
+  //           'area_id' => $row['D'],
+  //           'map_id' => $row['E'],
+  //           'region' => $row['F'],
+  //           'kota' => $row['G'],
+  //           'kecamatan' => $row['H'],
+  //           'kelurahan' => $row['I'],
+  //           'kompleks' => $row['J'],
+  //           'owner_type' => $row['K'],
+  //           'rw' => $row['L'],
+  //           'type_a' => $row['M'],
+  //           'type_b' => $row['N'],
+  //           'type_c' => $row['O'],
+  //           'type_d' => $row['P'],
+  //           'type_soho' => $row['Q'],
+  //           'hp_all' => $row['R'],
+  //           'hp_map' => $row['S'],
+  //           'color' => $row['T'],
+  //           'metode_pembangunan' => $row['U'],
+  //           'kendaraan_penghuni' => $row['V'],
+  //           'akses_penjualan' => $row['W'],
+  //           'kompetitor' => $row['X'],
+  //           'provider' => $row['Y'],
+  //           'biaya_langganan' => $row['Z'],
+  //           'nama_surveyor' => $row['AA'],
+  //           'no_hp' => $row['AB'],
+  //           'jenis_properti' => $row['AC'],
+  //           'bod_number' => $row['AD'],
+  //           'mitra_partnership' => $row['AE'],
+  //           'uniq_combi' => $row['AF'],
+  //         );
+
+  //         $this->db->where('id_report', $row['A']);
+  //         $this->db->update('summary', $data);
+  //       }
+  //       $numrows++;
+  //     }
+
+  //     $this->session->set_flashdata('message', '
+  //       <div class="alert alert-success">
+  //         <span>Updated!</span>
+  //       </div>
+  //       ');
+  //     redirect('leader/row_data');
+  //   } else {
+  //     print_r($upload);
+  //     $this->session->set_flashdata('message', '
+  //       <div class="alert alert-danger">
+  //         <span>ERROR!</span>
+  //       </div>
+  //       ');
+  //     redirect('leader/row_data');
+  //   }
+  // }
+
+  // public function row_data()
+  // {
+  //   $data['title'] = "Row Data";
+  //   $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+  //   $this->load->view('app/templates/header', $data);
+  //   $this->load->view('app/templates/sidebar', $data);
+  //   $this->load->view('app/templates/navbar', $data);
+  //   $this->load->view('app/leader/row_data', $data);
+  //   $this->load->view('app/templates/footer', $data);
+  // }
 
   public function progress_delete()
   {
@@ -91,7 +442,6 @@ class Leader extends CI_Controller
 
     if ($this->upload->do_upload('upload_kml')) {
       if ($this->upload->data('file_ext') == '.kml') {
-        // print_r($this->upload->data());
         $this->load->library('ftp');
         $config['hostname'] = "files.000webhost.com";
         $config['username'] = "teamca";
@@ -136,154 +486,6 @@ class Leader extends CI_Controller
     }
   }
 
-  public function import_progress()
-  {
-    $con_data = array();
-    $allowed = array('csv');
-    $filename = $_FILES['file']['name'];
-    $ext = pathinfo($filename, PATHINFO_EXTENSION);
-
-    $this->load->library('CSVReader');
-    $csvData = $this->csvreader->parse_csv($_FILES['file']['tmp_name']);
-
-    if (in_array($ext, $allowed)) {
-      if (!empty($csvData)) {
-        foreach ($csvData as $row) {
-          $con_data = array(
-            'id_report'           => $row['id_report'],
-            'timestamp'           => $row['timestamp'],
-            'area_id'             => $row['area_id'],
-            'map_id'              => $row['map_id'],
-            'region'              => $row['region'],
-            'kota'                => $row['kota'],
-            'kecamatan'           => $row['kecamatan'],
-            'kelurahan'           => $row['kelurahan'],
-            'kompleks'            => $row['kompleks'],
-            'owner_type'          => $row['owner_type'],
-            'rw'                  => $row['rw'],
-            'type_a'              => $row['type_a'],
-            'type_b'              => $row['type_b'],
-            'type_c'              => $row['type_c'],
-            'type_d'              => $row['type_d'],
-            'type_soho'           => $row['type_soho'],
-            'hp_all'              => $row['hp_all'],
-            'hp_map'              => $row['hp_map'],
-            'color'               => $row['color'],
-            'kendaraan_penghuni'  => $row['kendaraan_penghuni'],
-            'metode_pembangunan'  => $row['metode_pembangunan'],
-            'akses_penjualan'     => $row['akses_penjualan'],
-            'kompetitor'          => $row['kompetitor'],
-            'provider'            => $row['provider'],
-            'biaya_langganan'     => $row['biaya_langganan'],
-            'nama_surveyor'       => $row['nama_surveyor'],
-            'no_hp'               => $row['no_hp'],
-            'bod_number'          => $row['bod_number'],
-            'mitra_partnership'   => $row['mitra_partnership'],
-          );
-
-          // $this->db->where('id_report', $row['id_report']);
-          $this->db->insert('summary', $con_data);
-        }
-
-        $this->session->set_flashdata('message', '
-          <div class="alert alert-success my-1">
-          <p>Uploaded!</p>
-          </div>
-        ');
-        redirect('leader/import');
-      } else {
-        $this->session->set_flashdata('message', '
-          <div class="alert alert-danger my-1">
-          <p>The file has no data!</p>
-          </div>
-        ');
-        redirect("leader/import");
-      }
-    } else {
-      $this->session->set_flashdata('message', '
-          <div class="alert alert-danger my-1">
-          <p>The Extension of file is not <kbd>.csv</kbd> !</p>
-          <p class="m-0">Format you upload: <kbd>.' . $ext . '</kbd></p>
-          </div>
-        ');
-      redirect("leader/import");
-    }
-  }
-
-  public function import_update_progress()
-  {
-    $con_data = array();
-    $allowed = array('csv');
-    $filename = $_FILES['file']['name'];
-    $ext = pathinfo($filename, PATHINFO_EXTENSION);
-
-    $this->load->library('CSVReader');
-    $csvData = $this->csvreader->parse_csv($_FILES['file']['tmp_name']);
-
-    if (in_array($ext, $allowed)) {
-      if (!empty($csvData)) {
-        foreach ($csvData as $row) {
-          $con_data = array(
-            // 'id_report'           => $row['id_report'],
-            'timestamp'           => $row['timestamp'],
-            'area_id'             => $row['area_id'],
-            'map_id'              => $row['map_id'],
-            'region'              => $row['region'],
-            'kota'                => $row['kota'],
-            'kecamatan'           => $row['kecamatan'],
-            'kelurahan'           => $row['kelurahan'],
-            'kompleks'            => $row['kompleks'],
-            'owner_type'          => $row['owner_type'],
-            'rw'                  => $row['rw'],
-            'type_a'              => $row['type_a'],
-            'type_b'              => $row['type_b'],
-            'type_c'              => $row['type_c'],
-            'type_d'              => $row['type_d'],
-            'type_soho'           => $row['type_soho'],
-            'hp_all'              => $row['hp_all'],
-            'hp_map'              => $row['hp_map'],
-            'color'               => $row['color'],
-            'kendaraan_penghuni'  => $row['kendaraan_penghuni'],
-            'metode_pembangunan'  => $row['metode_pembangunan'],
-            'akses_penjualan'     => $row['akses_penjualan'],
-            'kompetitor'          => $row['kompetitor'],
-            'provider'            => $row['provider'],
-            'biaya_langganan'     => $row['biaya_langganan'],
-            'nama_surveyor'       => $row['nama_surveyor'],
-            'no_hp'               => $row['no_hp'],
-            'bod_number'          => $row['bod_number'],
-            'mitra_partnership'   => $row['mitra_partnership'],
-          );
-
-          $this->db->where('id_report', $row['id_report']);
-          $this->db->update('summary', $con_data);
-        }
-
-        $this->session->set_flashdata('message', '
-          <div class="alert alert-success my-1">
-          <p>Uploaded!</p>
-          </div>
-        ');
-        redirect('leader/import');
-      } else {
-        $this->session->set_flashdata('message', '
-          <div class="alert alert-danger my-1">
-          <p>The file has no data!</p>
-          </div>
-        ');
-        redirect("leader/import");
-      }
-    } else {
-      $this->session->set_flashdata('message', '
-          <div class="alert alert-danger my-1">
-          <p>The Extension of file is not <kbd>.csv</kbd> !</p>
-          <p class="m-0">Format you upload: <kbd>.' . $ext . '</kbd></p>
-          </div>
-        ');
-      redirect("leader/import");
-    }
-  }
-
   public function import_update()
   {
     $data['title'] = "Row Data Update";
@@ -302,14 +504,6 @@ class Leader extends CI_Controller
     } else {
       $this->form_validation->set_rules('kompleks', 'Komplek', 'required');
       $this->form_validation->set_rules('rw', 'RW/Developer', 'required');
-
-      // $this->form_validation->set_rules('prop[]', 'Property', 'required');
-      // $this->form_validation->set_rules('klasifikasi[]', 'Klasifikasi Tipe Rumah', 'required');
-      // $this->form_validation->set_rules('kepemilikan_penghuni', 'Kepemilikan Penghuni', 'required');
-      // $this->form_validation->set_rules('metode_pem[]', 'Metode Pembangunan', 'required');
-      // $this->form_validation->set_rules('akses[]', 'Akses Penjualan', 'required');
-      // $this->form_validation->set_rules('kompetitor[]', 'Kompetitor', 'required');
-      // $this->form_validation->set_rules('provider[]', 'Provider', 'required');
 
       if ($this->form_validation->run() == FALSE) {
         $data['title'] = "Summary Edit";
@@ -340,8 +534,6 @@ class Leader extends CI_Controller
         $rw = $this->input->post('rw');
         $prop = $this->input->post('prop');
         $props = implode(', ', $prop);
-        // $klasifikasi = $this->input->post('klasifikasi');
-        // $klasifikasis = implode(', ', $klasifikasi);
         $abjad_klari = $this->input->post('abjad_klari');
         $input_klari = $this->input->post('input_klari');
         $tingkat_potensial = $this->input->post('tingkat_potensial');
@@ -402,6 +594,18 @@ class Leader extends CI_Controller
     }
   }
 
+  public function summary_view($id)
+  {
+    $data['title'] = "Summary View";
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    $data['summary'] = $this->db->get_where('summary', ['id_report' => $id])->row_array();
+    $this->load->view('app/templates/header', $data);
+    $this->load->view('app/templates/sidebar', $data);
+    $this->load->view('app/templates/navbar', $data);
+    $this->load->view('app/leader/summary_view', $data);
+    $this->load->view('app/templates/footer', $data);
+  }
+
   public function kml_viewer()
   {
     $data['title'] = "KML Viewer";
@@ -425,56 +629,15 @@ class Leader extends CI_Controller
     $this->load->view('app/templates/footer', $data);
   }
 
-  public function ex_parsing_kml()
+  public function file()
   {
-    $this->load->helper('xml');
-    $file = base_url() . 'assets/kml/test.kml';
-
-    $xmlRaw = file_get_contents($file);
-    $this->load->library('simplexml');
-
-    $xmlData = $this->simplexml->xml_parse($xmlRaw);
-    foreach ($xmlData['Folder']['Placemark'] as $key => $value) {
-      $data = array();
-      $string = "<?xml version='1.0'?> " . str_replace("<br>", "", $value['description']) . "</table>";
-
-      $xml = simplexml_load_string($string);
-      $data['name'] = $value['name'];
-      $data['visibility'] = $value['visibility'];
-      $data['open'] = $value['open'][0];
-      $data['linestyle_color'] = $value['Style']['LineStyle']['color'];
-      $data['linestyle_width'] = $value['Style']['LineStyle']['width'];
-      $data['polystyle_fill'] = $value['Style']['PolyStyle']['fill'];
-      $data['polystyle_outline'] = $value['Style']['PolyStyle']['outline'];
-      $data['polystyle_color'] = $value['Style']['PolyStyle']['color'];
-      $data['extrude'] = $value['Polygon']['extrude'];
-      $data['altitudemode'] = $value['Polygon']['altitudeMode'];
-      $data['tessellate'] = $value['Polygon']['tessellate'];
-      $data['coordinates'] = $value['Polygon']['outerBoundaryIs']['LinearRing']['coordinates'];
-
-      foreach ($xml->tr as $kunci => $isi) {
-        $data2 = (string) $isi->td[1];
-        $data['desc_' . strtolower($isi->td[0])] = $data2;
-      }
-
-      echo "<pre>";
-      print_r($data);
-      echo "</pre>";
-
-      /* Remove comment if you want save to database (this is sample only for POSTGRE [postgis])
-		$coor = $value['Polygon']['outerBoundaryIs']['LinearRing']['coordinates'];
-		$coors = explode(',0', $coor);
-		$coordinates = '';
-		foreach ($coors as $c) {
-			if(!empty($c)){
-				$coorxy = explode(',', $c);
-				$coordinates[] = $coorxy[1].' '.$coorxy[0];
-			}
-		};
-		$this->db->set('coordinates',"ST_GeomFromText('POLYGON((".implode(',',$coordinates)."))',4326)",false);
-		$this->db->insert('kml_pg', $data);
-		*/
-    }
+    $data['title'] = "File Manajement";
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    $this->load->view('app/templates/header', $data);
+    $this->load->view('app/templates/sidebar', $data);
+    $this->load->view('app/templates/navbar', $data);
+    $this->load->view('app/leader/file', $data);
+    $this->load->view('app/templates/footer', $data);
   }
 }
 

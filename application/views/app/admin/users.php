@@ -3,7 +3,7 @@
 
   <a href="#" data-toggle="modal" data-target="#modalAddUser" class="btn my-3 btn-success">Add new users</a>
 
-  <table class="table w-100" id="table-user">
+  <table class="table table-responsive-md" id="">
     <thead>
       <tr>
         <th>ID</th>
@@ -15,7 +15,19 @@
         <th></th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+      <?php foreach ($users as $u) : ?>
+        <tr>
+          <td><?= $u['user_id'] ?></td>
+          <td><?= $u['name'] ?></td>
+          <td><?= $u['email'] ?></td>
+          <td><img src="<?= base_url('assets/img/profile/') . $u['image'] ?>" alt="Image" width="75" class="shadow rounded-circle"></td>
+          <td><?= $u['menu'] ?></td>
+          <td><?= anchor('admin/user_edit/' . $u['user_id'], 'Edit User Role', ['class' => 'btn btn-link text-primary']) ?></td>
+          <td><?= anchor('admin/user_delete/' . $u['user_id'], 'Delete User', ['class' => 'btn btn-link text-danger', 'onclick' => 'return confirm(\'Delete this User?\n$2\')']) ?></td>
+        </tr>
+      <?php endforeach; ?>
+    </tbody>
   </table>
 </div>
 

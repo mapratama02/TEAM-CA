@@ -26,7 +26,10 @@
     <iframe src="" allowfullscreen id="map-item" class="embed-responsive-item"></iframe>
   </div> -->
 
-  <div id="map"></div>
+  <div id="display">
+    <div id="map"></div>
+    <div id="capture"></div>
+  </div>
 
 </div>
 

@@ -10,7 +10,6 @@
               <img src="https://www.mncplay.id/wp-content/uploads/2013/10/COLOR_Logo-MNC-Play-Mendatar.png" width="200" alt="">
               <hr>
               <h3 class="text-center font-weight-normal">Informasi Survey Area</h3>
-              <!-- <?= validation_errors('<div class="alert alert-danger">', '</div>') ?> -->
             </div>
 
           </div>
@@ -44,7 +43,6 @@
                     <div class="col-md-6">
                       <label for="kota" class="h6">Kabupaten/Kota</label>
                       <select name="kota" id="kota" class="form-control">
-                        <!-- <option value="0">--SELECT--</option> -->
                       </select>
                       <?= form_error('kota', '<small class="text-danger">', '</small>') ?>
                     </div>
@@ -54,7 +52,6 @@
                     <div class="col-md-6">
                       <label for="kecamatan" class="h6">Kecamatan</label>
                       <select name="kecamatan" id="kecamatan" class="form-control">
-                        <!-- <option value="0">--SELECT--</option> -->
                       </select>
                       <?= form_error('kecamatan', '<small class="text-danger">', '</small>') ?>
                     </div>
@@ -62,24 +59,10 @@
                     <div class="col-md-6">
                       <label for="kelurahan" class="h6">Kelurahan</label>
                       <select name="kelurahan" id="kelurahan" class="form-control">
-                        <!-- <option value="0">--SELECT--</option> -->
                       </select>
                       <?= form_error('kelurahan', '<small class="text-danger">', '</small>') ?>
                     </div>
                   </div>
-
-                  <!-- <div class="form-group row">
-                    <div class="col-md-6">
-                      <label for="" class="h6">AREA ID</label>
-                      <input type="text" name="area_id" id="" class="form-control">
-                      <small class="text-muted">Optional</small>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="" class="h6">MAP ID</label>
-                      <input type="text" name="map_id" id="" class="form-control">
-                      <small class="text-muted">Optional</small>
-                    </div>
-                  </div> -->
 
                   <div class="form-group row">
                     <div class="col-md-4">
@@ -201,7 +184,6 @@
                   <div class="form-group">
                     <label for="" class="h6">Potensi <small id="result-potensi-label"></small></label>
                     <input type="text" name="tingkat_potensial" readonly class="form-control" id="result-potensi">
-                    <!-- <div class="potensi-range rounded mt-4" style="height: 5px; width: 100%"></div> -->
                     <div class="progress mt-3">
                       <div class="progress-bar progress-bar-striped bg-success potensi-range potensi" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
@@ -237,6 +219,18 @@
                       <input type="checkbox" value="Sewer/Got" <?= set_checkbox('metode_pem[]', 'Sewer/Got') ?> name="metode_pem[]" id="sewer-got" class="custom-control-input">
                       <label for="sewer-got" class="custom-control-label">Sewer/Got</label>
                     </div>
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" value="Sewer" <?= set_checkbox('metode_pem[]', 'Sewer') ?> name="metode_pem[]" id="sewer" class="custom-control-input">
+                      <label for="sewer" class="custom-control-label">Sewer</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" value="Aerial" <?= set_checkbox('metode_pem[]', 'Aerial') ?> name="metode_pem[]" id="aerial" class="custom-control-input">
+                      <label for="aerial" class="custom-control-label">Aerial</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" value="Aerial dan Underground" <?= set_checkbox('metode_pem[]', 'Aerial dan Underground') ?> name="metode_pem[]" id="aerial-dan-underground" class="custom-control-input">
+                      <label for="aerial-dan-underground" class="custom-control-label">Aerial dan Underground</label>
+                    </div>
                     <small>Tidak ada dalam list? <button type="button" id="metode_pem" class="btn-link badge btn">Tambah data</button></small>
                     <div id="metode_pem_add">
 
@@ -258,7 +252,10 @@
                       <input type="checkbox" value="Branding Car" name="akses[]" id="branding-car" class="custom-control-input">
                       <label for="branding-car" class="custom-control-label">Branding Car</label>
                     </div>
-                    <!-- <input type="text" name="akses[]" id="" placeholder="Lainnya:" class="form-control form-control-sm mt-1"> -->
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" value="Door to Door" name="akses[]" id="door-to-door" class="custom-control-input">
+                      <label for="door-to-door" class="custom-control-label">Door to Door</label>
+                    </div>
                     <small>Tidak ada dalam list? <button type="button" id="akses" class="btn-link badge btn">Tambah data</button></small>
                     <div id="akses_add">
 
@@ -289,7 +286,6 @@
                       <input type="checkbox" name="kompetitor[]" value="Indosat GIG" id="indosat-gig" class="custom-control-input">
                       <label for="indosat-gig" class="custom-control-label">Indosat GIG</label>
                     </div>
-                    <!-- <input type="text" name="kompetitor[]" id="" placeholder="Lainnya:" class="form-control form-control-sm mt-1"> -->
                     <small>Tidak ada dalam list? <button type="button" id="kompetitor" class="btn-link badge btn">Tambah data</button></small>
                     <div id="kompetitor_add">
 
@@ -316,7 +312,6 @@
                       <input type="checkbox" name="provider[]" value="Topas TV" id="topas" class="custom-control-input">
                       <label for="topas" class="custom-control-label">Topas TV</label>
                     </div>
-                    <!-- <input type="text" name="provider[]" id="" placeholder="Lainnya:" class="form-control form-control-sm mt-1"> -->
                     <small>Tidak ada dalam list? <button type="button" id="provider" class="btn-link badge btn">Tambah data</button></small>
                     <div id="provider_add">
 
@@ -327,7 +322,6 @@
 
                   <div class="form-group">
                     <label for="" class="h6">Berapa Rata-Rata Biaya Langganan Internet/PayTV Warga setempat?</label>
-                    <!-- <input type="number" name="biaya" id="" placeholder="contoh: 500000" class="form-control"> -->
                     <input type="range" name="biaya" id="biaya" step="25000" min="100000" max="3000000" value="100000" class="form-control-range">
                     <label for="" id="display-biaya">Biaya: Rp100.000</label>
                   </div>
@@ -347,11 +341,6 @@
 
                   <div class="form-group">
                     <label for="" class="h6">Nama Surveyor</label>
-                    <!-- <select name="surveyor" id="" class="form-control">
-                      <?php foreach ($surveyor as $sur) : ?>
-                        <option value="<?= $sur['name'] ?>"><?= $sur['name'] ?></option>
-                      <?php endforeach ?>
-                    </select> -->
                     <input type="text" name="surveyor" value="<?= $user['name'] ?>" id="" class="form-control">
                   </div>
 
@@ -361,18 +350,6 @@
                     <?= form_error('telepon', '<small class="text-danger">', '</small>') ?>
                   </div>
 
-                  <!-- <div class="form-group">
-                    <label for="" class="h6">Rekomendasi Untuk Roll-Out?</label>
-                    <div class="custom-control custom-radio">
-                      <input type="radio" name="roll_out" value="YA" id="roll-ya" class="custom-control-input">
-                      <label for="roll-ya" class="custom-control-label">YA</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                      <input type="radio" name="roll_out" value="TIDAK" id="roll-tidak" class="custom-control-input">
-                      <label for="roll-tidak" class="custom-control-label">TIDAK</label>
-                    </div>
-                  </div> -->
-
                   <div class="form-group">
                     <label for="" class="h6">Atachment File Map</label>
                     <input type="file" name="attachment" class="form-control-file" accept="image/*, .kml" id="">
@@ -381,7 +358,6 @@
                   <button type="submit" class="btn btn-outline-success btn-block" style="border-radius: 100px">Submit <i class="fab fa-telegram-plane"></i></button>
                   <div class="alert alert-warning mt-3">
                     <h2 class="alert-heading">Attention!</h2>
-                    <!-- <hr> -->
                     <div class="media mt-3">
                       <i class="fas mr-3 align-self-start fa-2x fa-fw fa-exclamation-triangle"></i>
                       <div class="media-body">

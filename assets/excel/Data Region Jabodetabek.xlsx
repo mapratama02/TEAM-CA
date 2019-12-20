@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Export Data</title>
+</head>
+
+<body>
+
+  <table border="1" cellpadding="8">
+    <tr>
+      <th style="">id_report</th>
+      <th style="">timestamp</th>
+      <th style="">tanggal_survey</th>
+      <th style="background:orange">area_id</th>
+      <th style="background:orange">map_id</th>
+      <th style="background:yellow">region</th>
+      <th style="background:yellow">kota</th>
+      <th style="background:yellow">kecamatan</th>
+      <th style="background:yellow">kelurahan</th>
+      <th style="background:yellow">kompleks</th>
+      <th style="">owner_type</th>
+      <th style="background:yellow">rw</th>
+      <th style="background:orange">type_a</th>
+      <th style="background:orange">type_b</th>
+      <th style="background:orange">type_c</th>
+      <th style="background:orange">type_d</th>
+      <th style="background:orange">type_soho</th>
+      <th style="background:orange">hp_all</th>
+      <th style="background:orange">hp_map</th>
+      <th style="background:orange">color</th>
+      <th style="">metode_pembangunan</th>
+      <th style="">kendaraan_penghuni</th>
+      <th style="">akses_penjualan</th>
+      <th style="">kompetitor</th>
+      <th style="">provider</th>
+      <th style="">biaya_langganan</th>
+      <th style="">nama_surveyor</th>
+      <th style="">no_hp</th>
+      <th style="">jenis_properti</th>
+      <th style="background:orange">bod_number</th>
+      <th style="background:orange">mitra_partnership</th>
+    </tr>
+          <tr>
+        <td style="">7914</td>
+        <td style="">0000-00-00 00:00:00</td>
+        <td style="">0000-00-00</td>
+        <td style="">02DPK07110</td>
+        <td style="">12180</td>
+        <td style="">Jabodetabek</td>
+        <td style="">Depok</td>
+        <td style=""> Limo </td>
+        <td style=""> Meruyung </td>
+        <td style="">Pemukiman RW07 </td>
+        <td style="">RW</td>
+        <td style="">07 </td>
+        <td style="">0</td>
+        <td style="">18</td>
+        <td style="">274</td>
+        <td style="">32</td>
+        <td style="">0</td>
+        <td style="">324</td>
+        <td style="">200</td>
+        <td style="">BLUE</td>
+        <td style="">Aerial</td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style="">12</td>
+        <td style=""></td>
+      </tr>
+          <tr>
+        <td style="">7915</td>
+        <td style="">0000-00-00 00:00:00</td>
+        <td style="">0000-00-00</td>
+        <td style="">02DPK07111</td>
+        <td style="">12181</td>
+        <td style="">Jabodetabek</td>
+        <td style="">Depok</td>
+        <td style=""> Limo </td>
+        <td style=""> Meruyung </td>
+        <td style="">Pemukiman RW09 </td>
+        <td style="">RW</td>
+        <td style="">09 </td>
+        <td style="">0</td>
+        <td style="">26</td>
+        <td style="">169</td>
+        <td style="">43</td>
+        <td style="">0</td>
+        <td style="">238</td>
+        <td style="">150</td>
+        <td style="">BLUE</td>
+        <td style="">Aerial</td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style=""></td>
+        <td style="">12</td>
+        <td style=""></td>
+      </tr>
+      </table>
+
+</body>
+
+</html>

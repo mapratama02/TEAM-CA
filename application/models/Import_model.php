@@ -26,7 +26,13 @@ class Import_model extends CI_Model
 
   public function insert_multiple($data)
   {
-    $this->db->insert_batch('data_temporary', $data);
+    $this->db->insert_batch('summary', $data);
+  }
+
+  public function update($data, $where)
+  {
+    $this->db->where('id_report', $where);
+    $this->db->update('summary', $data);
   }
 }
 

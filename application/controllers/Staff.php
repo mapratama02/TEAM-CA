@@ -13,7 +13,20 @@ class Staff extends CI_Controller
   }
 
   public function index()
-  { }
+  {
+    $data['title'] = 'Dashboard';
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+    $username = $data['user']['name'];
+    $data['region_personal'] = $this->db->query("SELECT `region` FROM `summary` WHERE `nama_surveyor` = '$username' GROUP BY `region`")->result_array();
+    $data['region_team'] = $this->db->query("SELECT `region` FROM `summary` GROUP BY `region`")->result_array();
+
+    $this->load->view('staff/header', $data);
+    $this->load->view('staff/sidebar', $data);
+    $this->load->view('staff/navbar', $data);
+    $this->load->view('staff/index', $data);
+    $this->load->view('staff/footer', $data);
+  }
 
   public function survey()
   {
@@ -146,7 +159,7 @@ class Staff extends CI_Controller
             $this->email->initialize($config);
             $this->email->set_newline("\r\n");
 
-            $admin = $this->db->get_where('user', ['role' => 1])->result_array();
+            $admin = $this->db->get_where('user', ['role' => 5])->result_array();
 
             foreach ($admin as $email) {
               $this->email->clear();
@@ -214,7 +227,7 @@ class Staff extends CI_Controller
             $this->db->insert('summary', $data);
 
             // Email Sender
-            $admin = $this->db->get_where('user', ['role' => 1])->result_array();
+            $admin = $this->db->get_where('user', ['role' => 5])->result_array();
 
             $this->load->library('email');
             $config = array();

@@ -28,7 +28,7 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>TimeStamp</th>
+            <th>Map ID</th>
             <th>Tanggal Survey</th>
             <th>Region</th>
             <th>Kota</th>
@@ -37,7 +37,7 @@
             <th>Kompleks</th>
             <th>Owner Type</th>
             <th>RW</th>
-            <th>Jenis Properti</th>
+            <!-- <th>Jenis Properti</th> -->
             <th>Tipe A</th>
             <th>Tipe B</th>
             <th>Tipe C</th>
@@ -46,7 +46,7 @@
             <th>HP All</th>
             <th>HP MAP</th>
             <th>Color</th>
-            <?php if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) : ?>
+            <?php if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2 || $this->session->userdata('role') == 5) : ?>
               <th>Action</th>
               <th></th>
             <?php endif ?>

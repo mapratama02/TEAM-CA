@@ -8,6 +8,20 @@
 <!-- Custom scripts for all pages-->
 <script src="<?= base_url('assets/') ?>js/sb-admin-2.min.js"></script>
 
+<script>
+  $(window).on('load', function() {
+    // alert("Loaded!");
+    $("#loader").css({
+      "transition": "1000ms ease",
+      "opacity": "0",
+    });
+
+    setTimeout(() => {
+      $("#loader").remove();
+    }, 1000);
+  });
+</script>
+
 </body>
 
 </html>

@@ -1,7 +1,5 @@
-<!-- Sidebar -->
 <ul class="navbar-nav sidebar sidebar-dark bg-primary accordion" style="" id="accordionSidebar">
 
-  <!-- Sidebar - Brand -->
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="javascript:void(0)">
     <div class="sidebar-brand-icon">
       <img src="http://mncplaysurabaya99.id.tc/wp-content/uploads/sites/447/2016/03/MNC_Playmedia-home.png" height="35" alt="">
@@ -15,18 +13,15 @@
                    FROM `user_menu` JOIN `user_access_menu`
                    ON `user_menu`.`id` = `user_access_menu`.`menu_id`
                    WHERE `user_access_menu`.`role_id` = '$role_id'
-                   ORDER BY `user_access_menu`.`menu_id` ASC";
+                   ORDER BY `user_access_menu`.`menu_id` DESC";
   $menu = $this->db->query($query_menu)->result_array();
   ?>
 
   <?php foreach ($menu as $m) : ?>
-    <!-- <div class="sidebar-heading">
-      <?= $m['menu'] ?>
-    </div> -->
 
     <?php
       $menu_id = $m['id'];
-      $query_sub_menu =   "SELECT * FROM `user_sub_menu`
+      $query_sub_menu = "SELECT * FROM `user_sub_menu`
                          WHERE `menu_id` = '$menu_id'
                          AND `is_active` = 1";
       $sub_menu = $this->db->query($query_sub_menu)->result_array();
@@ -43,15 +38,11 @@
           <span><?= $sm['title'] ?></span></a>
         </li>
       <?php endforeach ?>
-      <hr class="sidebar-divider my-2">
 
     <?php endforeach ?>
 
-    <!-- Divider -->
-    <!-- <hr class="sidebar-divider my-2"> -->
-    <!-- Sidebar Toggler (Sidebar) -->
-    <div class="text-center d-none d-md-inline">
-      <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    <div class="text-center d-none mt-3 d-md-inline">
+      <button class="rounded-circle border border-primary shadow" id="sidebarToggle"></button>
     </div>
 
 </ul>

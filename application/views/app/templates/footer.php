@@ -1,3 +1,4 @@
+<!-- Maaf Pak, untuk pencarian area dengan apa dan yang ditampilkan apa saja? -->
 </div>
 <!-- End of Main Content -->
 
@@ -15,14 +16,11 @@
 <!-- End of Content Wrapper -->
 
 </div>
-<!-- End of Page Wrapper -->
 
-<!-- Scroll to Top Button-->
 <a class="scroll-to-top rounded" href="#page-top">
   <i class="fas fa-angle-up"></i>
 </a>
 
-<!-- Logout Modal-->
 <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -41,29 +39,35 @@
   </div>
 </div>
 
-<!-- Bootstrap core JavaScript-->
 <script src="<?= base_url('assets/') ?>vendor/jquery/jquery.min.js"></script>
 <script src="<?= base_url('assets/') ?>vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-<!-- Core plugin JavaScript-->
 <script src="<?= base_url('assets/') ?>vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="<?= base_url('assets/') ?>vendor/datatables/jquery.dataTables.min.js"></script>
 <script src="<?= base_url('assets/') ?>vendor/datatables/dataTables.bootstrap4.js"></script>
 
-<!-- Custom scripts for all pages-->
 <script src="<?= base_url('assets/') ?>js/sb-admin-2.min.js"></script>
 <script src="<?= base_url('assets/') ?>js/index.js"></script>
 
-<!-- Page level plugins -->
 <script src="<?= base_url('assets/') ?>vendor/chart.js/Chart.min.js"></script>
 
-<!-- Page level custom scripts -->
 <script src="<?= base_url('assets/') ?>js/demo/chart-area-demo.js"></script>
-<!-- <script src="<?= base_url('assets/') ?>js/demo/chart-pie-demo.js"></script> -->
+<script src="<?= base_url('assets/') ?>js/swal.min.js"></script>
+<script src="<?= base_url('assets/') ?>js/upup.js"></script>
 <script src="<?= base_url('assets/') ?>Croppie/croppie.js"></script>
+<script src="<?= base_url('assets/') ?>owl/owl.carousel.min.js"></script>
 <script src="https://js.arcgis.com/4.13/"></script>
-<!-- <script src="http://www.openlayers.org/api/OpenLayers.js"></script> -->
-<!-- <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.0.1/build/ol.js"></script> -->
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqqCGbf0rY_CAO2MyTt6gJWKG84WKJUCU&callback=initMap"></script>
+
+<script>
+  UpUp.start({
+    'cache-version': 'v2',
+    'content-url': '<?= site_url($this->uri->segment(1)) ?>',
+    'content': 'Cannot reach this site. Check your internet connection.',
+    'service-worker-url': '/upup.sw.js'
+  });
+</script>
 
 <script>
   $(window).on('load', function() {
@@ -139,6 +143,19 @@
     })
   <?php endif ?>
 
+  <?php if ($title == 'Menu Builder') : ?>
+    $('#modalEditMenu').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget) // Button that triggered the modal
+      var recipient = button.data('name') // Extract info from data-* attributes
+      var id = button.data('id') // Extract info from data-* attributes
+      // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+      // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+      var modal = $(this);
+      modal.find('.modal-body #namemenu').val(recipient)
+      modal.find('.modal-body #idmenu').val(id)
+    })
+  <?php endif ?>
+
   <?php if ($title == "KML Viewer") : ?>
     $('#uploadKML button[type="submit"]').click(function() {
       $('.modal-footer-child').removeClass('d-none');
@@ -146,43 +163,81 @@
 
     $('#dir').change(function() {
       var dir = $(this).val();
+      var map;
+      var src = `https://teamca.000webhostapp.com/kml/${dir}`;
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: new google.maps.LatLng(-19.257753, 146.823688),
+          zoom: 10,
+          mapTypeId: 'terrain'
+        });
+
+        var kmlLayer = new google.maps.KmlLayer(src, {
+          suppressInfoWindows: true,
+          preserveViewport: false,
+          map: map
+        });
+
+        kmlLayer.addListener('click', function(event) {
+          var content = event.featureData.infoWindowHtml;
+          var res = content.split('/');
+          var tag = res[8].split('<');
+          var testimonial = document.getElementById('capture');
+          testimonial.innerHTML = `
+          <ul class="list-unstyled">
+            <li>${res[0]}</li>
+            <li>${res[1]}</li>
+            <li>${res[2]}</li>
+            <li>${res[3]}</li>
+            <li>${res[4]}</li>
+            <li>${res[5]}</li>
+            <li>RW ${res[6]}</li>
+            <li>${res[7]}</li>
+            <li>${tag[0]}</li>
+          </ul>
+          `;
+        });
+      }
+
+      initMap();
 
       // $('#map').removeClass("d-none");
       // $('#map-item').attr("src", "http://osm.quelltextlich.at/viewer-js.html?kml_url=https://teamca.000webhostapp.com/kml/" + dir);
 
-      require([
-        "esri/Map",
-        "esri/views/MapView",
-        "esri/layers/KMLLayer",
-        "esri/widgets/ScaleBar",
-        "esri/widgets/LayerList"
-      ], function(Map, MapView, KMLLayer, ScaleBar) {
-        var layer = new KMLLayer({
-          url: "https://teamca.000webhostapp.com/kml/" + dir
-        });
+      // require([
+      //   "esri/Map",
+      //   "esri/views/MapView",
+      //   "esri/layers/KMLLayer",
+      //   "esri/widgets/ScaleBar",
+      //   "esri/widgets/LayerList"
+      // ], function(Map, MapView, KMLLayer, ScaleBar) {
+      //   var layer = new KMLLayer({
+      //     url: `https://teamca.000webhostapp.com/kml/${dir}`
+      //   });
 
-        var map = new Map({
-          basemap: "topo-vector",
-          layers: [layer]
-        });
+      //   var map = new Map({
+      //     basemap: "topo-vector",
+      //     layers: [layer]
+      //   });
 
-        var view = new MapView({
-          container: "map",
-          map: map,
-          center: [107.6094, -6.90616],
-          zoom: 6.5,
-        });
+      //   var view = new MapView({
+      //     container: "map",
+      //     map: map,
+      //     center: [107.6094, -6.90616],
+      //     zoom: 6.5,
+      //   });
 
-        var layerList = new layerList({
-          view: view
-        });
+      //   var layerList = new layerList({
+      //     view: view
+      //   });
 
-        layer.then(function() {
-          layer.watch("fullExtent", function(fullExtent) {
-            view.extent = fullExtent
-          });
-        });
-      });
+      //   layer.then(function() {
+      //     layer.watch("fullExtent", function(fullExtent) {
+      //       view.extent = fullExtent
+      //     });
+      //   });
+      // });
     });
 
   <?php endif ?>
@@ -280,8 +335,6 @@
           kelurahan = '';
         }
 
-
-
         var t = $('#table_summary').DataTable({
           processing: true,
           serverSide: true,
@@ -303,7 +356,7 @@
               data: 'id_report'
             },
             {
-              data: 'timestamp'
+              data: 'map_id'
             },
             {
               data: 'tanggal_survey'
@@ -316,9 +369,6 @@
             },
             {
               data: 'kecamatan'
-            },
-            {
-              data: 'kelurahan'
             },
             {
               data: 'kelurahan'
@@ -356,7 +406,7 @@
             {
               data: 'color'
             },
-            <?php if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) : ?> {
+            <?php if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2 || $this->session->userdata('role') == 5) : ?> {
                 data: 'action',
                 orderable: false,
                 searchable: false
@@ -404,108 +454,150 @@
         var kot = kota;
         var reg = region;
 
-        $('#kelurahan').attr("disabled", "disabled");
-        $('#kecamatan').attr("disabled", "disabled");
-        $('#kota').attr("disabled", "disabled");
-        $('#region').attr("disabled", "disabled");
-        $('#summary_search').attr("disabled", "disabled");
+        $(this).parents(".card").remove();
 
         var res_txt = '';
         res_txt += '<a class="btn btn-success" href="<?= base_url('leader/export') ?>?kelurahan=' + link + '&kecamatan=' + kec + '&kota=' + kot + '&region=' + reg + '">Export as Excel <i class="far fa-file-excel"></i></a>';
 
         $("#export").html(res_txt);
 
-
-
-        // $.ajax({
-        //   url: "<?= base_url('user/get_data') ?>",
-        //   method: "POST",
-        //   data: {
-        //     kelurahan: kelurahan,
-        //     region: region,
-        //     kota: kota,
-        //     kecamatan: kecamatan,
-        //   },
-        //   async: false,
-        //   dataType: 'json',
-        //   success: function(data) {
-        //     var html = '';
-        //     for (var i = 0; i < data.length; i++) {
-        //       html += '<tr>';
-        //       html += '<td>' + data[i].id_report + '</td>';
-        //       html += '<td>' + data[i].timestamp + '</td>';
-        //       html += '<td>' + data[i].tanggal_survey + '</td>';
-        //       html += '<td>' + data[i].region + '</td>';
-        //       html += '<td>' + data[i].kota + '</td>';
-        //       html += '<td>' + data[i].kecamatan + '</td>';
-        //       html += '<td>' + data[i].kelurahan + '</td>';
-        //       html += '<td>' + data[i].kompleks + '</td>';
-        //       html += '<td>' + data[i].owner_type + '</td>';
-        //       html += '<td>' + data[i].rw + '</td>';
-        //       html += '<td>' + data[i].jenis_properti + '</td>';
-        //       html += '<td>' + data[i].type_a + '</td>';
-        //       html += '<td>' + data[i].type_b + '</td>';
-        //       html += '<td>' + data[i].type_c + '</td>';
-        //       html += '<td>' + data[i].type_d + '</td>';
-        //       html += '<td>' + data[i].type_soho + '</td>';
-        //       html += '<td>' + data[i].hp_all + '</td>';
-        //       html += '<td>' + data[i].hp_map + '</td>';
-        //       html += '<td>' + data[i].color + '</td>';
-        //       <?php if ($this->session->userdata('role') != 3 && $this->session->userdata('role') != 4) : ?>
-        //         html += '<td> <a href="<?= base_url('leader/summary_edit/') ?>' + data[i].id_report + '">Edit</a>' + '</td>';
-        //         html += '<td> <a href="<?= base_url('leader/summary_delete/') ?>' + data[i].id_report + '">Delete</a>' + '</td>';
-        //       <?php endif ?>
-        //       html += '<td><a href="<?= base_url('user/kml_viewer/') ?>' + data[i].id_report + '">' + data[i].attachment + '</a></td>';
-
-        //     }
-        //     $("#table_summary tbody").html(html);
-        //     var res = data.length;
-        //     var kelurahan = $('#kelurahan').val();
-        //     if (kelurahan == null) {
-        //       kelurahan = '';
-        //     }
-
-        //     var kecamatan = $('#kecamatan').val();
-        //     if (kecamatan == null) {
-        //       kecamatan = '';
-        //     }
-
-        //     var kota = $('#kota').val();
-        //     if (kota == null) {
-        //       kota = '';
-        //     }
-
-        //     var region = $('#region').val();
-        //     if (region == null) {
-        //       region = '';
-        //     }
-
-        //     var link = kelurahan;
-        //     var kec = kecamatan;
-        //     var kot = kota;
-        //     var reg = region;
-
-        //     $('#kelurahan').attr("disabled", "disabled");
-        //     $('#kecamatan').attr("disabled", "disabled");
-        //     $('#kota').attr("disabled", "disabled");
-        //     $('#region').attr("disabled", "disabled");
-        //     $('#summary_search').attr("disabled", "disabled");
-
-        //     var res_txt = ''
-        //     res_txt += '<p>there is <b>' + res + '</b> data</p>';
-
-        //     if (res > 0) {
-        //       res_txt += '<a class="btn btn-success" href="<?= base_url('leader/export') ?>?kelurahan=' + link + '&kecamatan=' + kec + '&kota=' + kot + '&region=' + reg + '">Export as Excel <i class="far fa-file-excel"></i></a>';
-        //     }
-        //     $("#summary_result").html(res_txt);
-
-        //   },
-        //   error: function() {
-        //     alert("Something went wrong");
-        //   }
-        // });
       });
     })
+  <?php endif ?>
+
+  <?php if ($title == "Search Area") : ?>
+    $(function() {
+      $('#region').change(function() {
+        var region = $(this).val();
+        $.ajax({
+          url: "<?php echo base_url() ?>/user/get_kota",
+          method: "POST",
+          data: {
+            region: region
+          },
+          async: false,
+          dataType: 'json',
+          success: function(data) {
+            var html = '';
+            var i;
+            html += '<option value="">--Pilih Kota--</option>';
+            for (i = 0; i < data.length; i++) {
+              html += '<option value="' + data[i].kota + '">' + data[i].kota + '</option>';
+            }
+            $('#kota').html(html);
+            $('#kota').attr("autofocus");
+            $('#kecamatan option').remove();
+            $('#kelurahan option').remove();
+          }
+        });
+      });
+
+      $('#kota').change(function() {
+        var kota = $(this).val();
+        $.ajax({
+          url: "<?php echo base_url() ?>/user/get_kecamatan",
+          method: "POST",
+          data: {
+            kota: kota
+          },
+          async: false,
+          dataType: 'json',
+          success: function(data) {
+            var html = '';
+            var i;
+            html += '<option value="">--Pilih Kecamatan--</option>';
+            for (i = 0; i < data.length; i++) {
+              html += '<option value="' + data[i].kecamatan + '">' + data[i].kecamatan + '</option>';
+            }
+            $('#kecamatan').html(html);
+            $('#kelurahan option').remove();
+          }
+        });
+      });
+
+      $('#kecamatan').change(function() {
+        var kecamatan = $(this).val();
+        $.ajax({
+          url: "<?php echo base_url() ?>/user/get_kelurahan",
+          method: "POST",
+          data: {
+            kecamatan: kecamatan
+          },
+          async: false,
+          dataType: 'json',
+          success: function(data) {
+            var html = '';
+            var i;
+            html += '<option value="">--Pilih Kelurahan--</option>';
+            for (i = 0; i < data.length; i++) {
+              html += '<option value="' + data[i].kelurahan + '">' + data[i].kelurahan + '</option>';
+            }
+            $('#kelurahan').html(html);
+
+          }
+        });
+      });
+
+      $('#kelurahan').change(function() {
+        $('#summary_search').removeAttr("disabled");
+      });
+    })
+
+
+    $('#search').click(function() {
+      var region = $('#region').val();
+      var kota = $('#kota').val();
+      var kecamatan = $('#kecamatan').val();
+      var kelurahan = $('#kelurahan').val();
+      var rw = $('#rw').val();
+
+      var tab = $('#table_search').DataTable({
+        processing: true,
+        serverSide: true,
+        order: [],
+        ajax: {
+          url: '<?= base_url('user/data_json_search_area') ?>',
+          method: "POST",
+          data: {
+            region: region,
+            kota: kota,
+            kecamatan: kecamatan,
+            kelurahan: kelurahan,
+            rw: rw,
+          }
+        },
+        scrollX: true,
+        responsive: true,
+        lengthMenu: [10, 20, 50, 100],
+        columns: [{
+            data: 'id_report'
+          },
+          {
+            data: 'area_id'
+          },
+          {
+            data: 'map_id'
+          },
+          {
+            data: 'region'
+          },
+          {
+            data: 'kota'
+          },
+          {
+            data: 'kecamatan'
+          },
+          {
+            data: 'kelurahan'
+          },
+          {
+            data: 'rw'
+          }
+        ]
+      });
+
+      $(this).parents(".card").remove();
+    });
   <?php endif ?>
 
   <?php if ($title == "Data Survey by Color") : ?>
@@ -547,7 +639,7 @@
             data: 'id_report'
           },
           {
-            data: 'timestamp'
+            data: 'map_id'
           },
           {
             data: 'tanggal_survey'
@@ -560,9 +652,6 @@
           },
           {
             data: 'kecamatan'
-          },
-          {
-            data: 'kelurahan'
           },
           {
             data: 'kelurahan'
@@ -600,7 +689,7 @@
           {
             data: 'color'
           },
-          <?php if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) : ?> {
+          <?php if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2 || $this->session->userdata('role') == 5) : ?> {
               data: 'action',
               orderable: false,
               searchable: false
@@ -888,8 +977,15 @@
             name: value
           },
           success: function() {
-            alert("You're name has changed!");
-            document.location.href = "<?= base_url('user/edit') ?>";
+            // alert("You're name has changed!");
+            Swal.fire(
+              'Yeay!',
+              'You\'re name has changed!',
+              'success'
+            );
+            setTimeout(() => {
+              document.location.href = "<?= base_url('user/edit') ?>";
+            }, 1000);
           },
           error: function() {
             alert("Error while updating your name!");
@@ -904,13 +1000,13 @@
     $image_crop = $('#image_demo').croppie({
       enableExif: false,
       viewport: {
-        width: 512,
-        height: 512,
+        width: 250,
+        height: 250,
         type: 'square' //circle
       },
       boundary: {
-        width: 512,
-        height: 512
+        width: 250,
+        height: 250
       }
     });
 
@@ -940,8 +1036,13 @@
           },
           success: function(data) {
             $('#uploadimageModal').hide();
+            Swal.fire(
+              'Yeay!',
+              'Your Profile image is changed!',
+              'success'
+            );
             document.location.href = "<?= base_url('user') ?>";
-            alert("You're image profile has changed!");
+            // alert("You're image profile has changed!");
           },
           error: function() {
             alert("Error while updating your profile");
@@ -952,53 +1053,171 @@
   <?php endif ?>
 
   <?php if ($title == "Dashboard") : ?>
-    $(function() {
-      $(".data-frame").on('click', function() {
-        var response = $(this).data('frame');
-        if (response == 0) {
-          $(".response").addClass('d-none');
-        } else {
-          $(".response").removeClass('d-none');
-          $("#response").attr("src", response);
-        }
-      });
-    })
+    $(".owl-carousel").owlCarousel({
+      autoWidth: false,
+      items: 1,
+      loop: false
+    });
 
-    <?php foreach ($region as $reg) : ?>
-      <?php $kt = $reg['region'] ?>
-      <?php
-          $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('BLUE')")->row_array();
-          $jml_aktif = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('RED')")->row_array();
-          $jml_not = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('BROWN')")->row_array();
-          ?>
-      var ctx = document.getElementById("dataRegional<?= str_replace(" ", "", $reg['region']) ?>");
-      var myPieChart<?= str_replace(" ", "", $reg['region']) ?> = new Chart(ctx, {
-        type: 'doughnut',
+    <?php if ($this->session->userdata('role') == 3) : ?>
+      <?php foreach ($region as $reg) : ?>
+        <?php $kt = $reg['region'] ?>
+        <?php
+              $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('BLUE')")->row_array();
+              $jml_aktif = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('RED')")->row_array();
+              $jml_not = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('BROWN')")->row_array();
+              ?>
+        var ctx = document.getElementById("dataRegional<?= str_replace(" ", "", $reg['region']) ?>");
+        var myPieChart<?= str_replace(" ", "", $reg['region']) ?> = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ["Potensial", "Aktif", "Not Potensial"],
+            datasets: [{
+              data: [
+                <?= $jml_pot['jml_potensial'] ?>,
+                <?= $jml_aktif['jml_potensial'] ?>,
+                <?= $jml_not['jml_potensial'] ?>,
+              ],
+              backgroundColor: ['#4e73df', '#e74a3b', '#ad6947'],
+              hoverBorderColor: "rgba(234, 236, 244, 1)",
+              borderWidth: 0.5,
+            }],
+          },
+          options: {
+            title: {
+              display: true,
+              text: '<?= $kt ?>'
+            },
+            maintainAspectRatio: false,
+            tooltips: {
+              titleMarginBottom: 10,
+              titleFontColor: '#6e707e',
+              titleFontSize: 20,
+              bodyFontSize: 14,
+              backgroundColor: "rgb(255,255,255)",
+              bodyFontColor: "#000000",
+              borderColor: '#dddfeb',
+              borderWidth: 1,
+              xPadding: 15,
+              yPadding: 15,
+              displayColors: false,
+              caretPadding: 10,
+              callbacks: {
+                label: function(tooltipItem, data) {
+                  var dataset = data.datasets[tooltipItem.datasetIndex];
+                  var dataLabel = data.labels[tooltipItem.index] || '';
+                  var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                    return previousValue + currentValue;
+                  });
+                  var currentValue = dataset.data[tooltipItem.index];
+                  var percentage = number_format(currentValue);
+
+                  return dataLabel + ": " + percentage + " HP";
+                }
+              }
+            },
+            legend: {
+              display: true,
+              position: 'bottom',
+              fontFamily: 'Comic Sans MS',
+              fontSize: 20
+            },
+            cutoutPercentage: 70,
+          },
+        });
+      <?php endforeach ?>
+
+      var ctx = document.getElementById("dataProduction");
+      var myBarChart = new Chart(ctx, {
+        type: 'bar',
         data: {
-          labels: ["Potensial", "Aktif", "Not Potensial"],
+          labels: [
+            <?php foreach ($region as $reg) : ?>
+
+              "<?= $reg['region'] ?>",
+
+            <?php endforeach ?>
+          ],
           datasets: [{
-            data: [
-              <?= $jml_pot['jml_potensial'] ?>,
-              <?= $jml_aktif['jml_potensial'] ?>,
-              <?= $jml_not['jml_potensial'] ?>,
-            ],
-            backgroundColor: ['#4e73df', '#e74a3b', '#ad6947'],
-            hoverBorderColor: "rgba(234, 236, 244, 1)",
-          }],
+              label: "Blue",
+              backgroundColor: "#4e73df",
+              borderColor: "#4e73df",
+              data: [
+                <?php foreach ($region as $kt) : ?>
+                  <?php $city = $kt['region'] ?>
+                  <?php $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$city' AND `color` IN ('BLUE') AND `area_id` = ''")->row_array() ?>
+                  <?= $jml_pot['jml_potensial'] ?>,
+
+                <?php endforeach ?>
+              ]
+            },
+            {
+              label: "Brown",
+              backgroundColor: "#ad6947",
+              borderColor: "#ad6947",
+              data: [
+                <?php foreach ($region as $kt) : ?>
+                  <?php $city = $kt['region'] ?>
+                  <?php $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$city' AND `color` IN ('BROWN') AND `area_id` = ''")->row_array() ?>
+                  <?= $jml_pot['jml_potensial'] ?>,
+
+                <?php endforeach ?>
+              ]
+            }
+          ],
         },
         options: {
-          title: {
-            display: true,
-            text: '<?= $kt ?>'
-          },
           maintainAspectRatio: false,
+          layout: {
+            padding: {
+              left: 10,
+              right: 25,
+              top: 25,
+              bottom: 0
+            }
+          },
+          scales: {
+            xAxes: [{
+              time: {
+                unit: 'month'
+              },
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              ticks: {
+                maxTicksLimit: 6
+              },
+              maxBarThickness: 100,
+            }],
+            yAxes: [{
+              ticks: {
+                min: 0,
+                maxTicksLimit: 5,
+                padding: 5,
+                callback: function(value, index, values) {
+                  return number_format(value);
+                }
+              },
+              gridLines: {
+                color: "rgb(234, 236, 244)",
+                zeroLineColor: "rgb(234, 236, 244)",
+                drawBorder: false,
+                borderDash: [10],
+                zeroLineBorderDash: [10]
+              }
+            }],
+          },
+          legend: {
+            display: true,
+            position: 'bottom'
+          },
           tooltips: {
             titleMarginBottom: 10,
             titleFontColor: '#6e707e',
-            titleFontSize: 20,
-            bodyFontSize: 14,
+            titleFontSize: 14,
             backgroundColor: "rgb(255,255,255)",
-            bodyFontColor: "#000000",
+            bodyFontColor: "#858796",
             borderColor: '#dddfeb',
             borderWidth: 1,
             xPadding: 15,
@@ -1006,189 +1225,365 @@
             displayColors: false,
             caretPadding: 10,
             callbacks: {
-              label: function(tooltipItem, data) {
-                //get the concerned dataset
-                var dataset = data.datasets[tooltipItem.datasetIndex];
-                var dataLabel = data.labels[tooltipItem.index] || '';
-                //calculate the total of this data set
-                var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
-                  return previousValue + currentValue;
-                });
-                //get the current items value
-                var currentValue = dataset.data[tooltipItem.index];
-                //calculate the precentage based on the total and current item, also this does a rough rounding to give a whole number
-                var percentage = number_format(currentValue);
-
-                return dataLabel + ": " + percentage + " HP";
+              label: function(tooltipItem, chart) {
+                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                return datasetLabel + ': ' + number_format(tooltipItem.yLabel);
               }
             }
           },
-          legend: {
-            display: true,
-            position: 'bottom',
-            fontFamily: 'Comic Sans MS',
-            fontSize: 20
-          },
-          cutoutPercentage: 70,
-        },
+        }
       });
-    <?php endforeach ?>
 
-    var ctx = document.getElementById("dataProduction");
-    var myBarChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: [
-          <?php foreach ($region as $reg) : ?>
-
-            "<?= $reg['region'] ?>",
-
-          <?php endforeach ?>
-        ],
-        datasets: [{
-            label: "Blue",
-            backgroundColor: "#4e73df",
-            borderColor: "#4e73df",
-            // data: [4215, 5312, 6251, 7841, 9821, 14984],
-            data: [
-              <?php foreach ($region as $kt) : ?>
-                <?php $city = $kt['region'] ?>
-                <?php $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$city' AND `color` IN ('BLUE') AND `area_id` = ''")->row_array() ?>
+      <?php $nama = $user['name'] ?>
+      <?php foreach ($region_personal as $reg) : ?>
+        <?php $kt = $reg['region'] ?>
+        <?php
+              $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('BLUE') AND `nama_surveyor` = '$nama'")->row_array();
+              $jml_aktif = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('RED') AND `nama_surveyor` = '$nama'")->row_array();
+              $jml_not = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('BROWN') AND `nama_surveyor` = '$nama'")->row_array();
+              ?>
+        var ctx = document.getElementById("data-region-personal-<?= str_replace(" ", "", $reg['region']) ?>");
+        var myPieChart<?= str_replace(" ", "", $reg['region']) ?> = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ["Potensial", "Aktif", "Not Potensial"],
+            datasets: [{
+              data: [
                 <?= $jml_pot['jml_potensial'] ?>,
-
-              <?php endforeach ?>
-            ]
+                <?= $jml_aktif['jml_potensial'] ?>,
+                <?= $jml_not['jml_potensial'] ?>,
+              ],
+              backgroundColor: ['#4e73df', '#e74a3b', '#ad6947'],
+              hoverBorderColor: "rgba(234, 236, 244, 1)",
+              borderWidth: 0.5,
+            }],
           },
-          {
-            label: "Brown",
-            backgroundColor: "#ad6947",
-            borderColor: "#ad6947",
-            // data: [4215, 5312, 6251, 7841, 9821, 14984],
-            data: [
-              <?php foreach ($region as $kt) : ?>
-                <?php $city = $kt['region'] ?>
-                <?php $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$city' AND `color` IN ('BROWN') AND `area_id` = ''")->row_array() ?>
-                <?= $jml_pot['jml_potensial'] ?>,
+          options: {
+            title: {
+              display: true,
+              text: '<?= $kt ?>'
+            },
+            maintainAspectRatio: false,
+            tooltips: {
+              titleMarginBottom: 10,
+              titleFontColor: '#6e707e',
+              titleFontSize: 20,
+              bodyFontSize: 14,
+              backgroundColor: "rgb(255,255,255)",
+              bodyFontColor: "#000000",
+              borderColor: '#dddfeb',
+              borderWidth: 1,
+              xPadding: 15,
+              yPadding: 15,
+              displayColors: false,
+              caretPadding: 10,
+              callbacks: {
+                label: function(tooltipItem, data) {
+                  var dataset = data.datasets[tooltipItem.datasetIndex];
+                  var dataLabel = data.labels[tooltipItem.index] || '';
+                  var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                    return previousValue + currentValue;
+                  });
+                  var currentValue = dataset.data[tooltipItem.index];
+                  var percentage = number_format(currentValue);
 
-              <?php endforeach ?>
-            ]
-          }
-        ],
-      },
-      options: {
-        maintainAspectRatio: false,
-        layout: {
-          padding: {
-            left: 10,
-            right: 25,
-            top: 25,
-            bottom: 0
-          }
-        },
-        scales: {
-          xAxes: [{
-            time: {
-              unit: 'month'
-            },
-            gridLines: {
-              display: false,
-              drawBorder: false
-            },
-            ticks: {
-              maxTicksLimit: 6
-            },
-            maxBarThickness: 100,
-          }],
-          yAxes: [{
-            ticks: {
-              min: 0,
-              maxTicksLimit: 5,
-              padding: 5,
-              // Include a dollar sign in the ticks
-              callback: function(value, index, values) {
-                return number_format(value);
+                  return dataLabel + ": " + percentage + " HP";
+                }
               }
             },
-            gridLines: {
-              color: "rgb(234, 236, 244)",
-              zeroLineColor: "rgb(234, 236, 244)",
-              drawBorder: false,
-              borderDash: [10],
-              zeroLineBorderDash: [10]
-            }
-          }],
-        },
-        legend: {
-          display: true,
-          position: 'bottom'
-        },
-        tooltips: {
-          titleMarginBottom: 10,
-          titleFontColor: '#6e707e',
-          titleFontSize: 14,
-          backgroundColor: "rgb(255,255,255)",
-          bodyFontColor: "#858796",
-          borderColor: '#dddfeb',
-          borderWidth: 1,
-          xPadding: 15,
-          yPadding: 15,
-          displayColors: false,
-          caretPadding: 10,
-          callbacks: {
-            label: function(tooltipItem, chart) {
-              var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-              return datasetLabel + ': ' + number_format(tooltipItem.yLabel);
-            }
-          }
-        },
-      }
-    });
+            legend: {
+              display: true,
+              position: 'bottom',
+              fontFamily: 'Comic Sans MS',
+              fontSize: 20
+            },
+            cutoutPercentage: 70,
+          },
+        });
+      <?php endforeach ?>
 
-    var ctx = document.getElementById("myPieChart");
-    var myPieChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: [
-          <?php foreach ($label_color as $label) : ?>
+      var ctx = document.getElementById("data-production-personal");
+      var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [
+            <?php foreach ($region_personal as $reg) : ?>
 
-            '<?= $label['color'] ?>',
-
-          <?php endforeach ?>
-        ],
-        datasets: [{
-          data: [
-            <?php foreach ($label_color as $label) : ?>
-              <?php $color = $label['color'] ?>
-              <?php $hp = $this->db->query("SELECT SUM(`hp_ca`) AS `hp` FROM `ca_report` WHERE `color` = '$color'")->row_array() ?>
-
-              '<?= number_format($hp['hp'], 0, ',', '.') ?>',
+              "<?= $reg['region'] ?>",
 
             <?php endforeach ?>
           ],
-          backgroundColor: ['black', 'blue', 'brown', 'deeppink', 'green', 'olive', 'purple', 'red', 'yellow'],
-          // hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
-          hoverBorderColor: "rgba(234, 236, 244, 1)",
-          borderWidth: 0
-        }],
-      },
-      options: {
-        maintainAspectRatio: false,
-        tooltips: {
-          backgroundColor: "rgb(255,255,255)",
-          bodyFontColor: "#858796",
-          borderColor: '#dddfeb',
-          borderWidth: 1,
-          xPadding: 15,
-          yPadding: 15,
-          displayColors: false,
-          caretPadding: 10,
+          datasets: [{
+              label: "Blue",
+              backgroundColor: "#4e73df",
+              borderColor: "#4e73df",
+              data: [
+                <?php foreach ($region as $kt) : ?>
+                  <?php $city = $kt['region'] ?>
+                  <?php $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$city' AND `color` IN ('BLUE') AND `area_id` = '' AND `nama_surveyor` = '$nama'")->row_array() ?>
+                  <?= $jml_pot['jml_potensial'] ?>,
+
+                <?php endforeach ?>
+              ]
+            },
+            {
+              label: "Brown",
+              backgroundColor: "#ad6947",
+              borderColor: "#ad6947",
+              data: [
+                <?php foreach ($region as $kt) : ?>
+                  <?php $city = $kt['region'] ?>
+                  <?php $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$city' AND `color` IN ('BROWN') AND `area_id` = '' AND `nama_surveyor` = '$nama'")->row_array() ?>
+                  <?= $jml_pot['jml_potensial'] ?>,
+
+                <?php endforeach ?>
+              ]
+            }
+          ],
         },
-        legend: {
-          display: false
+        options: {
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              left: 10,
+              right: 25,
+              top: 25,
+              bottom: 0
+            }
+          },
+          scales: {
+            xAxes: [{
+              time: {
+                unit: 'month'
+              },
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              ticks: {
+                maxTicksLimit: 6
+              },
+              maxBarThickness: 100,
+            }],
+            yAxes: [{
+              ticks: {
+                min: 0,
+                maxTicksLimit: 5,
+                padding: 5,
+                callback: function(value, index, values) {
+                  return number_format(value);
+                }
+              },
+              gridLines: {
+                color: "rgb(234, 236, 244)",
+                zeroLineColor: "rgb(234, 236, 244)",
+                drawBorder: false,
+                borderDash: [10],
+                zeroLineBorderDash: [10]
+              }
+            }],
+          },
+          legend: {
+            display: true,
+            position: 'bottom'
+          },
+          tooltips: {
+            titleMarginBottom: 10,
+            titleFontColor: '#6e707e',
+            titleFontSize: 14,
+            backgroundColor: "rgb(255,255,255)",
+            bodyFontColor: "#858796",
+            borderColor: '#dddfeb',
+            borderWidth: 1,
+            xPadding: 15,
+            yPadding: 15,
+            displayColors: false,
+            caretPadding: 10,
+            callbacks: {
+              label: function(tooltipItem, chart) {
+                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                return datasetLabel + ': ' + number_format(tooltipItem.yLabel);
+              }
+            }
+          },
+        }
+      });
+    <?php else : ?>
+      <?php foreach ($region as $reg) : ?>
+        <?php $kt = $reg['region'] ?>
+        <?php
+              $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('BLUE')")->row_array();
+              $jml_aktif = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('RED')")->row_array();
+              $jml_not = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$kt' AND `color` IN ('BROWN')")->row_array();
+              ?>
+        var ctx = document.getElementById("dataRegional<?= str_replace(" ", "", $reg['region']) ?>");
+        var myPieChart<?= str_replace(" ", "", $reg['region']) ?> = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ["Potensial", "Aktif", "Not Potensial"],
+            datasets: [{
+              data: [
+                <?= $jml_pot['jml_potensial'] ?>,
+                <?= $jml_aktif['jml_potensial'] ?>,
+                <?= $jml_not['jml_potensial'] ?>,
+              ],
+              backgroundColor: ['#4e73df', '#e74a3b', '#ad6947'],
+              hoverBorderColor: "rgba(234, 236, 244, 1)",
+              borderWidth: 0.5,
+            }],
+          },
+          options: {
+            title: {
+              display: true,
+              text: '<?= $kt ?>'
+            },
+            maintainAspectRatio: false,
+            tooltips: {
+              titleMarginBottom: 10,
+              titleFontColor: '#6e707e',
+              titleFontSize: 20,
+              bodyFontSize: 14,
+              backgroundColor: "rgb(255,255,255)",
+              bodyFontColor: "#000000",
+              borderColor: '#dddfeb',
+              borderWidth: 1,
+              xPadding: 15,
+              yPadding: 15,
+              displayColors: false,
+              caretPadding: 10,
+              callbacks: {
+                label: function(tooltipItem, data) {
+                  var dataset = data.datasets[tooltipItem.datasetIndex];
+                  var dataLabel = data.labels[tooltipItem.index] || '';
+                  var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                    return previousValue + currentValue;
+                  });
+                  var currentValue = dataset.data[tooltipItem.index];
+                  var percentage = number_format(currentValue);
+
+                  return dataLabel + ": " + percentage + " HP";
+                }
+              }
+            },
+            legend: {
+              display: true,
+              position: 'bottom',
+              fontFamily: 'Comic Sans MS',
+              fontSize: 20
+            },
+            cutoutPercentage: 70,
+          },
+        });
+      <?php endforeach ?>
+
+      var ctx = document.getElementById("dataProduction");
+      var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [
+            <?php foreach ($region as $reg) : ?>
+
+              "<?= $reg['region'] ?>",
+
+            <?php endforeach ?>
+          ],
+          datasets: [{
+              label: "Blue",
+              backgroundColor: "#4e73df",
+              borderColor: "#4e73df",
+              data: [
+                <?php foreach ($region as $kt) : ?>
+                  <?php $city = $kt['region'] ?>
+                  <?php $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$city' AND `color` IN ('BLUE') AND `area_id` = ''")->row_array() ?>
+                  <?= $jml_pot['jml_potensial'] ?>,
+
+                <?php endforeach ?>
+              ]
+            },
+            {
+              label: "Brown",
+              backgroundColor: "#ad6947",
+              borderColor: "#ad6947",
+              data: [
+                <?php foreach ($region as $kt) : ?>
+                  <?php $city = $kt['region'] ?>
+                  <?php $jml_pot = $this->db->query("SELECT SUM(`hp_all`) AS `jml_potensial` FROM `summary` WHERE `region` = '$city' AND `color` IN ('BROWN') AND `area_id` = ''")->row_array() ?>
+                  <?= $jml_pot['jml_potensial'] ?>,
+
+                <?php endforeach ?>
+              ]
+            }
+          ],
         },
-        cutoutPercentage: 80,
-      },
-    });
+        options: {
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              left: 10,
+              right: 25,
+              top: 25,
+              bottom: 0
+            }
+          },
+          scales: {
+            xAxes: [{
+              time: {
+                unit: 'month'
+              },
+              gridLines: {
+                display: false,
+                drawBorder: false
+              },
+              ticks: {
+                maxTicksLimit: 6
+              },
+              maxBarThickness: 100,
+            }],
+            yAxes: [{
+              ticks: {
+                min: 0,
+                maxTicksLimit: 5,
+                padding: 5,
+                callback: function(value, index, values) {
+                  return number_format(value);
+                }
+              },
+              gridLines: {
+                color: "rgb(234, 236, 244)",
+                zeroLineColor: "rgb(234, 236, 244)",
+                drawBorder: false,
+                borderDash: [10],
+                zeroLineBorderDash: [10]
+              }
+            }],
+          },
+          legend: {
+            display: true,
+            position: 'bottom'
+          },
+          tooltips: {
+            titleMarginBottom: 10,
+            titleFontColor: '#6e707e',
+            titleFontSize: 14,
+            backgroundColor: "rgb(255,255,255)",
+            bodyFontColor: "#858796",
+            borderColor: '#dddfeb',
+            borderWidth: 1,
+            xPadding: 15,
+            yPadding: 15,
+            displayColors: false,
+            caretPadding: 10,
+            callbacks: {
+              label: function(tooltipItem, chart) {
+                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                return datasetLabel + ': ' + number_format(tooltipItem.yLabel);
+              }
+            }
+          },
+        }
+      });
+    <?php endif ?>
+
   <?php endif ?>
 
   <?php if ($title == 'Form Survey') : ?>
@@ -1340,14 +1735,6 @@
       $("#klari-d").click(function() {
         var html = '';
         if ($(this).is(":checked")) {
-          // html += '<div class="input-group input-group-sm mb-3" id="input-d">';
-          // html += '<div class="input-group-prepend">';
-          // html += '<span class="input-group-text">D <input type="hidden" name="abjad_klari[]" value="D"></span>';
-          // html += '</div>';
-          // html += '<input type="number" min="0" class="form-control" name="input_klari[]" value="0">';
-          // html += '</div>';
-
-          // $('#input-klari').append(html);
           $("#input-d").show();
         } else {
           $("#input-d").hide();
@@ -1373,7 +1760,6 @@
           var total_rumah = ((a + b + c + soho) / (a + b + c + d + soho));
           var enam_puluh_persen = eval(60 / 100);
           var result = total_rumah;
-          // $("#result-potensi-label").val(result);
           if (result >= enam_puluh_persen) {
             $("#result-potensi").val("BLUE");
 
@@ -1389,7 +1775,6 @@
             "width": (result * 100) + "%"
           });
           $("#result-potensi-label").html((result * 100) + "%");
-          // $("#result-potensi").val(result);
         });
         $("#inp-b").on("input", function() {
           var a = eval($("#inp-a").val());
@@ -1400,7 +1785,6 @@
           var total_rumah = ((a + b + c + soho) / (a + b + c + d + soho));
           var enam_puluh_persen = eval(60 / 100);
           var result = total_rumah;
-          // $("#result-potensi-label").val(result);
           if (result >= enam_puluh_persen) {
             $("#result-potensi").val("BLUE");
 
@@ -1416,7 +1800,6 @@
             "width": (result * 100) + "%"
           });
           $("#result-potensi-label").html((result * 100) + "%");
-          // $("#result-potensi").val(result);
         });
         $("#inp-c").on("input", function() {
           var a = eval($("#inp-a").val());
@@ -1427,7 +1810,6 @@
           var total_rumah = ((a + b + c + soho) / (a + b + c + d + soho));
           var enam_puluh_persen = eval(60 / 100);
           var result = total_rumah;
-          // $("#result-potensi-label").val(result);
           if (result >= enam_puluh_persen) {
             $("#result-potensi").val("BLUE");
 
@@ -1443,7 +1825,6 @@
             "width": (result * 100) + "%"
           });
           $("#result-potensi-label").html((result * 100) + "%");
-          // $("#result-potensi").val(result);
         });
         $("#inp-d").on("input", function() {
           var a = eval($("#inp-a").val());
@@ -1454,7 +1835,6 @@
           var total_rumah = ((a + b + c + soho) / (a + b + c + d + soho));
           var enam_puluh_persen = eval(60 / 100);
           var result = total_rumah;
-          // $("#result-potensi-label").val(result);
           if (result >= enam_puluh_persen) {
             $("#result-potensi").val("BLUE");
 
@@ -1470,7 +1850,6 @@
             "width": (result * 100) + "%"
           });
           $("#result-potensi-label").html((result * 100) + "%");
-          // $("#result-potensi").val(result);
         });
         $("#inp-soho").on("input", function() {
           var a = eval($("#inp-a").val());
@@ -1481,7 +1860,6 @@
           var total_rumah = ((a + b + c + soho) / (a + b + c + d + soho));
           var enam_puluh_persen = eval(60 / 100);
           var result = total_rumah;
-          // $("#result-potensi-label").val(result);
           if (result >= enam_puluh_persen) {
             $("#result-potensi").val("BLUE");
 
@@ -1497,21 +1875,12 @@
             "width": (result * 100) + "%"
           });
           $("#result-potensi-label").html((result * 100) + "%");
-          // $("#result-potensi").val(result);
         });
       });
 
       $(function() {
         $("#metode_pem").click(function() {
           var html = '';
-          // html += '<input type="text" name="metode_pem[]" id="" value="" placeholder="Lainnya:" class="form-control form-control-sm mt-1">';
-
-          // html += '<div class="input-group input-group-sm mb-3">';
-          // html += '<input type="text" name="metode_pem[]" id="" value="" placeholder="Lainnya:" class="form-control form-control-sm mt-1">';
-          // html += '<div class="input-group-append">';
-          // html += '<button class="btn button-addon btn-outline-danger" type="button" id="">&cross;</button>';
-          // html += '</div>';
-          // html += '</div>';
 
           html += '<div class="input-group mb-3">';
           html += '<input type="text" name="metode_pem[]" class="form-control" placeholder="Lainnya" aria-label="Recipient\'s username" aria-describedby="button-addon2">';
@@ -1528,7 +1897,7 @@
 
         $("#akses").click(function() {
           var html = '';
-          // html += '<input type="text" name="akses[]" id="" value="" placeholder="Lainnya:" class="form-control form-control-sm mt-1">';
+
           html += '<div class="input-group mb-3">';
           html += '<input type="text" name="akses[]" class="form-control" placeholder="Lainnya" aria-label="Recipient\'s username" aria-describedby="button-addon2">';
           html += '<div class="input-group-append">';
@@ -1544,7 +1913,7 @@
 
         $("#kompetitor").click(function() {
           var html = '';
-          // html += '<input type="text" name="kompetitor[]" id="" value="" placeholder="Lainnya:" class="form-control form-control-sm mt-1">';
+
           html += '<div class="input-group mb-3">';
           html += '<input type="text" name="kompetitor[]" class="form-control" placeholder="Lainnya" aria-label="Recipient\'s username" aria-describedby="button-addon2">';
           html += '<div class="input-group-append">';
@@ -1560,7 +1929,7 @@
 
         $("#provider").click(function() {
           var html = '';
-          // html += '<input type="text" name="provider[]" id="" value="" placeholder="Lainnya:" class="form-control form-control-sm mt-1">';
+
           html += '<div class="input-group mb-3">';
           html += '<input type="text" name="provider[]" class="form-control" placeholder="Lainnya" aria-label="Recipient\'s username" aria-describedby="button-addon2">';
           html += '<div class="input-group-append">';

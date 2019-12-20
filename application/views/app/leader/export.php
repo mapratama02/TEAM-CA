@@ -12,69 +12,71 @@
 
   <table border="1" cellpadding="8">
     <tr>
-      <th>id_report</th>
-      <th>timestamp</th>
-      <th>tanggal_survey</th>
-      <th>area_id</th>
-      <th>map_id</th>
-      <th>region</th>
-      <th>kota</th>
-      <th>kecamatan</th>
-      <th>kelurahan</th>
-      <th>kompleks</th>
-      <th>owner_type</th>
-      <th>rw</th>
-      <th>type_a</th>
-      <th>type_b</th>
-      <th>type_c</th>
-      <th>type_d</th>
-      <th>type_soho</th>
-      <th>hp_all</th>
-      <th>hp_map</th>
-      <th>color</th>
-      <th>kendaraan_penghuni</th>
-      <th>metode_pembangunan</th>
-      <th>akses_penjualan</th>
-      <th>kompetitor</th>
-      <th>provider</th>
-      <th>biaya_langganan</th>
-      <th>nama_surveyor</th>
-      <th>no_hp</th>
-      <th>bod_number</th>
-      <th>mitra_partnership</th>
+      <th style="">id_report</th>
+      <th style="">timestamp</th>
+      <th style="">tanggal_survey</th>
+      <th style="background:orange">area_id</th>
+      <th style="background:orange">map_id</th>
+      <th style="background:yellow">region</th>
+      <th style="background:yellow">kota</th>
+      <th style="background:yellow">kecamatan</th>
+      <th style="background:yellow">kelurahan</th>
+      <th style="background:yellow">kompleks</th>
+      <th style="">owner_type</th>
+      <th style="background:yellow">rw</th>
+      <th style="background:orange">type_a</th>
+      <th style="background:orange">type_b</th>
+      <th style="background:orange">type_c</th>
+      <th style="background:orange">type_d</th>
+      <th style="background:orange">type_soho</th>
+      <th style="background:orange">hp_all</th>
+      <th style="background:orange">hp_map</th>
+      <th style="background:orange">color</th>
+      <th style="">metode_pembangunan</th>
+      <th style="">kendaraan_penghuni</th>
+      <th style="">akses_penjualan</th>
+      <th style="">kompetitor</th>
+      <th style="">provider</th>
+      <th style="">biaya_langganan</th>
+      <th style="">nama_surveyor</th>
+      <th style="">no_hp</th>
+      <th style="">jenis_properti</th>
+      <th style="background:orange">bod_number</th>
+      <th style="background:orange">mitra_partnership</th>
     </tr>
     <?php foreach ($survey as $sur) : ?>
       <tr>
-        <td><?= $sur->id_report ?></td>
-        <td><?= $sur->timestamp ?></td>
-        <td><?= $sur->tanggal_survey ?></td>
-        <td><?= $sur->area_id ?></td>
-        <td><?= $sur->map_id ?></td>
-        <td><?= $sur->region ?></td>
-        <td><?= $sur->kota ?></td>
-        <td><?= $sur->kecamatan ?></td>
-        <td><?= $sur->kelurahan ?></td>
-        <td><?= $sur->kompleks ?></td>
-        <td><?= $sur->owner_type ?></td>
-        <td><?= $sur->rw ?></td>
-        <td><?= $sur->type_a ?></td>
-        <td><?= $sur->type_b ?></td>
-        <td><?= $sur->type_c ?></td>
-        <td><?= $sur->type_d ?></td>
-        <td><?= $sur->type_soho ?></td>
-        <td><?= $sur->hp_all ?></td>
-        <td><?= $sur->hp_map ?></td>
-        <td><?= $sur->color ?></td>
-        <td><?= $sur->kendaraan_penghuni ?></td>
-        <td><?= $sur->metode_pembangunan ?></td>
-        <td><?= $sur->akses_penjualan ?></td>
-        <td><?= $sur->kompetitor ?></td>
-        <td><?= $sur->provider ?></td>
-        <td><?= $sur->biaya_langganan ?></td>
-        <td><?= $sur->nama_surveyor ?></td>
-        <td><?= $sur->no_hp ?></td>
-        <td><?= $sur->bod_number ?></td>
-        <td><?= $sur->mitra_partnership ?></td>
+        <td style=""><?= $sur->id_report ?></td>
+        <td style=""><?= $sur->timestamp ?></td>
+        <td style=""><?= $sur->tanggal_survey ?></td>
+        <td style=""><?= $sur->area_id ?></td>
+        <td style=""><?= $sur->map_id ?></td>
+        <td style=""><?= $sur->region ?></td>
+        <td style=""><?= $sur->kota ?></td>
+        <td style=""><?= $sur->kecamatan ?></td>
+        <td style=""><?= $sur->kelurahan ?></td>
+        <td style=""><?= $sur->kompleks ?></td>
+        <td style=""><?= $sur->owner_type ?></td>
+        <td style=""><?= $sur->rw ?></td>
+        <td style=""><?= $sur->type_a ?></td>
+        <td style=""><?= $sur->type_b ?></td>
+        <td style=""><?= $sur->type_c ?></td>
+        <td style=""><?= $sur->type_d ?></td>
+        <td style=""><?= $sur->type_soho ?></td>
+        <td style=""><?= $sur->hp_all ?></td>
+        <td style=""><?= $sur->hp_map ?></td>
+        <td style=""><?= $sur->color ?></td>
+        <td style=""><?= $sur->metode_pembangunan ?></td>
+        <td style=""><?= $sur->kendaraan_penghuni ?></td>
+        <td style=""><?= $sur->akses_penjualan ?></td>
+        <td style=""><?= $sur->kompetitor ?></td>
+        <td style=""><?= $sur->provider ?></td>
+        <td style=""><?= $sur->biaya_langganan ?></td>
+        <td style=""><?= $sur->nama_surveyor ?></td>
+        <td style=""><?= $sur->no_hp ?></td>
+        <td style=""><?= $sur->jenis_properti ?></td>
+        <td style=""><?= $sur->bod_number ?></td>
+        <td style=""><?= $sur->mitra_partnership ?></td>
       </tr>
     <?php endforeach ?>
   </table>

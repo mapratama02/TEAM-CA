@@ -19,6 +19,28 @@
   <!-- Custom styles for this template-->
   <link href="<?= base_url('assets/') ?>css/sb-admin-2.min.css" rel="stylesheet">
 
+  <style>
+    #loader {
+      height: 100%;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    #loader.complete {
+      display: none;
+    }
+  </style>
+
 </head>
 
-<body class="bg-gradient-success">
+<body class="bg-warning">
+
+  <div id="loader" class="bg-white d-flex justify-content-center align-items-center">
+    <div class="text-center">
+      <!-- <img src="<?= base_url('assets/') ?>img/preloader.gif" alt="" width="200"> -->
+      <h1 class="text-gray-900">Loading...</h1>
+    </div>
+  </div>

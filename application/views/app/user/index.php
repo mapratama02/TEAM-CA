@@ -17,6 +17,7 @@
               <h6 class="card-subtitle mb-2 text-muted mb-4"><?= $user['email'] ?></h6>
               <a href="<?= base_url('user/edit') ?>" class="card-link btn btn-outline-dark rounded-0">Edit Profile</a>
               <a href="<?= base_url('user/change_password') ?>" class="card-link btn btn-outline-dark rounded-0">Change Password</a>
+              <!-- <p><?= $_SERVER['SERVER_NAME'] ?></p> -->
             </div>
           </div>
         </div>

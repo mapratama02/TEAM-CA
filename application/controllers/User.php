@@ -12,6 +12,25 @@ class User extends CI_Controller
     $this->load->model('Survey_model', 'survey');
   }
 
+  public function dashboard()
+  {
+    $data['title'] = 'Dashboard';
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+    $data['region'] = $this->db->query("SELECT `id_report`, `region` FROM `summary` GROUP BY `region`")->result_array();
+
+    $username = $data['user']['name'];
+    $data['region_personal'] = $this->db->query("SELECT `id_report`, `region` FROM `summary` WHERE `nama_surveyor` = '$username' GROUP BY `region`")->result_array();
+    $data['label_color'] = $this->db->query("SELECT `color` FROM `map_online` GROUP BY `color`")->result_array();
+
+    $data['user_name'] = $data['user']['name'];
+
+    $this->load->view('app/templates/header', $data);
+    $this->load->view('app/templates/sidebar', $data);
+    $this->load->view('app/templates/navbar', $data);
+    $this->load->view('app/admin/dashboard', $data);
+    $this->load->view('app/templates/footer', $data);
+  }
+
   public function index()
   {
     $data['title'] = 'My Profile';
@@ -101,7 +120,7 @@ class User extends CI_Controller
   public function data_json_survey_color()
   {
     $this->load->library('datatables');
-    $this->datatables->select('id_report, timestamp, tanggal_survey, region, kota, kecamatan, kelurahan, kompleks, owner_type, rw, tipe_rumah, type_a, type_b, type_c, type_d, type_soho, hp_all, hp_map, color, attachment');
+    $this->datatables->select('id_report, map_id, tanggal_survey, region, kota, kecamatan, kelurahan, kompleks, owner_type, rw, tipe_rumah, type_a, type_b, type_c, type_d, type_soho, hp_all, hp_map, color, attachment');
     $this->datatables->from('summary');
     $filter = $this->input->post('color');
     if ($filter != '') {
@@ -110,7 +129,7 @@ class User extends CI_Controller
         $this->datatables->or_where('color', $color[$i]);
       }
     }
-    if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
+    if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2 || $this->session->userdata('role') == 5) {
       $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
       $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
     }
@@ -120,7 +139,7 @@ class User extends CI_Controller
   public function data_json_survey_region()
   {
     $this->load->library('datatables');
-    $this->datatables->select('id_report, timestamp, tanggal_survey, region, kota, kecamatan, kelurahan, kompleks, owner_type, rw, tipe_rumah, type_a, type_b, type_c, type_d, type_soho, hp_all, hp_map, color, attachment');
+    $this->datatables->select('id_report, map_id, tanggal_survey, region, kota, kecamatan, kelurahan, kompleks, owner_type, rw, tipe_rumah, type_a, type_b, type_c, type_d, type_soho, hp_all, hp_map, color, attachment');
 
     $this->datatables->from('summary');
 
@@ -128,23 +147,22 @@ class User extends CI_Controller
     $kota = $this->input->post('kota');
     $kecamatan = $this->input->post('kecamatan');
     $kelurahan = $this->input->post('kelurahan');
-
-    if($region != '' && $kota != '' && $kecamatan != '' && $kelurahan != ''){
+ 
+    if ($region != '' && $kota != '' && $kecamatan != '' && $kelurahan != '') {
       $this->datatables->where('region =', $region);
       $this->datatables->where('kota =', $kota);
       $this->datatables->where('kecamatan =', $kecamatan);
       $this->datatables->where('kelurahan =', $kelurahan);
-      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
+      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2 || $this->session->userdata('role') == 5) {
         $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
         $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
       }
       echo $this->datatables->generate();
-    }
-    elseif ($region != '' && $kota != '' && $kecamatan != '') {
+    } elseif ($region != '' && $kota != '' && $kecamatan != '') {
       $this->datatables->where('region =', $region);
       $this->datatables->where('kota =', $kota);
       $this->datatables->where('kecamatan =', $kecamatan);
-      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
+      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2 || $this->session->userdata('role') == 5) {
         $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
         $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
       }
@@ -152,69 +170,25 @@ class User extends CI_Controller
     } elseif ($region != '' && $kota != '') {
       $this->datatables->where('region =', $region);
       $this->datatables->where('kota =', $kota);
-      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
+      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2 || $this->session->userdata('role') == 5) {
         $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
         $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
       }
       echo $this->datatables->generate();
     } elseif ($region != '') {
       $this->datatables->where('region =', $region);
-      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
+      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2 || $this->session->userdata('role') == 5) {
         $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
         $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
       }
       echo $this->datatables->generate();
     } else {
-      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
+      if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 2 || $this->session->userdata('role') == 5) {
         $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
         $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
       }
       echo $this->datatables->generate();
     }
-
-
-
-    // if ($region != '' && $kota != '' && $kecamatan != '' && $kelurahan != '') {
-    //   $this->datatables->where('region', $region);
-    //   $this->datatables->where('kota', $kota);
-    //   $this->datatables->where('kecamatan', $kecamatan);
-    //   $this->datatables->where('kelurahan', $kelurahan);
-    //   if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
-    //     $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
-    //     $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
-    //   }
-    //   echo $this->datatables->generate();
-    // } elseif ($kota != '' && $kecamatan != '' && $kelurahan != '') {
-    //   $this->datatables->where('kota', $kota);
-    //   $this->datatables->where('kecamatan', $kecamatan);
-    //   $this->datatables->where('kelurahan', $kelurahan);
-    //   if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
-    //     $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
-    //     $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
-    //   }
-    //   echo $this->datatables->generate();
-    // } elseif ($kecamatan != '' && $kelurahan != '') {
-    //   $this->datatables->where('kecamatan', $kecamatan);
-    //   $this->datatables->where('kelurahan', $kelurahan);
-    //   if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
-    //     $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
-    //     $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
-    //   }
-    //   echo $this->datatables->generate();
-    // } elseif ($kelurahan != '') {
-    //   $this->datatables->where('kelurahan', $kelurahan);
-    //   if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
-    //     $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
-    //     $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
-    //   }
-    //   echo $this->datatables->generate();
-    // } else {
-    //   if ($this->session->userdata('role') == 1 || $this->session->userdata('role') == 5) {
-    //     $this->datatables->add_column('delete', anchor('leader/summary_delete/$1', 'Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm(\'Delete this Data?\')']), 'id_report');
-    //     $this->datatables->add_column('action', anchor('leader/summary_edit/$1', 'Edit', ['class' => 'btn btn-info']), 'id_report');
-    //   }
-    //   echo $this->datatables->generate();
-    // }
   }
 
   public function change_password()
@@ -229,8 +203,8 @@ class User extends CI_Controller
 
     if ($this->form_validation->run() == FALSE) {
       $this->load->view('app/templates/header', $data);
-      $this->load->view('app/templates/navbar', $data);
       $this->load->view('app/templates/sidebar', $data);
+      $this->load->view('app/templates/navbar', $data);
       $this->load->view('app/user/change_password', $data);
       $this->load->view('app/templates/footer', $data);
     } else {
@@ -248,7 +222,7 @@ class User extends CI_Controller
         $this->session->set_flashdata('msg', '<div class="alert alert-success">You\'re Password have changed successfully!</div>');
         redirect('user/change_password');
       } else {
-        $this->session->set_flashdata('msg', '<div class="alert alert-danger">You\'re Old Password doesn\'t match with our database!</div>');
+        $this->session->set_flashdata('msg', '<div class="alert alert-danger">Old password tidak sesuai dengan password yang anda gunakan sekarang!</div>');
         redirect('user/change_password');
       }
     }
@@ -267,7 +241,6 @@ class User extends CI_Controller
     $this->load->view('app/templates/footer', $data);
   }
 
-  // {
   public function get_kota()
   {
     $kota = $this->input->post('region');
@@ -302,7 +275,41 @@ class User extends CI_Controller
 
     echo json_encode($data);
   }
-  // }
+
+  public function search_area()
+  {
+    $data['title'] = "Search Area";
+    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+    $data['rw'] = $this->db->query("SELECT * FROM `summary` GROUP BY `rw`")->result_array();
+    $data['region'] = $this->db->query("SELECT `region` FROM `summary` GROUP BY `region`")->result();
+
+    $this->load->view('app/templates/header', $data);
+    $this->load->view('app/templates/sidebar', $data);
+    $this->load->view('app/templates/navbar', $data);
+    $this->load->view('app/user/search_area', $data);
+    $this->load->view('app/templates/footer', $data);
+  }
+
+  public function data_json_search_area()
+  {
+    $region = $this->input->post('region');
+    $kota = $this->input->post('kota');
+    $kecamatan = $this->input->post('kecamatan');
+    $kelurahan = $this->input->post('kelurahan');
+    $rw = $this->input->post('rw');
+
+    $this->load->library('datatables');
+    $this->datatables->select('id_report, area_id, map_id, region, kota, kecamatan, kelurahan, rw');
+    $this->datatables->from('summary');
+    $this->datatables->where('region =', $region);
+    $this->datatables->where('kota =', $kota);
+    $this->datatables->where('kecamatan =', $kecamatan);
+    $this->datatables->where('kelurahan =', $kelurahan);
+    $this->datatables->where('rw =', $rw);
+
+    echo $this->datatables->generate();
+  }
 }
 
 /* End of file User.php */

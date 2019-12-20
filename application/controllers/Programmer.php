@@ -4,8 +4,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Programmer extends CI_Controller
 {
-  private $filename = 'import_file';
-
   public function __construct()
   {
     parent::__construct();
@@ -28,6 +26,24 @@ class Programmer extends CI_Controller
     $this->load->view('app/templates/navbar', $data);
     $this->load->view('app/programmer/menu_builder', $data);
     $this->load->view('app/templates/footer', $data);
+  }
+
+  public function menu_builder_edit()
+  {
+    $id = $this->input->post('id');
+    $name = $this->input->post('menu');
+
+    $object = ['menu' => $name];
+
+    $this->db->where('id', $id);
+    $this->db->update('user_menu', $object);
+    redirect('programmer/menu_builder');
+  }
+
+  public function menu_builder_delete($id)
+  {
+    $this->db->delete('user_menu', ['id' => $id]);
+    redirect('programmer/menu_builder');
   }
 
   public function submenu_edit($id)
@@ -119,39 +135,10 @@ class Programmer extends CI_Controller
     }
   }
 
-  public function import()
+  public function submenu_delete($id)
   {
-    $data['title'] = 'Import Excel';
-    $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-
-    $this->load->view('app/templates/header', $data);
-    $this->load->view('app/templates/sidebar', $data);
-    $this->load->view('app/templates/navbar', $data);
-    $this->load->view('app/programmer/import', $data);
-    $this->load->view('app/templates/footer', $data);
-  }
-
-  public function import_progress()
-  {
-    $this->load->model('Import_model', 'import_mod');
-    include APPPATH . 'third_party/excel_reader2.php';
-
-    $upload = $this->import_mod->upload_file($this->filename);
-
-    chmod(FCPATH . 'assets/excel/' . $upload['file']['file_name'], 0777);
-    // error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-
-    $data = new Spreadsheet_Excel_Reader(FCPATH . 'assets/excel/' . $upload['file']['file_name']);
-    $data->setOutputEncoding('CP1251');
-    $numrows = $data->rowcount($sheet_index = 0);
-
-    $success = 0;
-    for ($i = 2; $i <= $numrows; $i++) {
-      $nama = $data->val($i, 1);
-      print_r($name);
-    }
-
-    die();
+    $this->db->delete('user_sub_menu', ['id' => $id]);
+    redirect('programmer/submenu_builder');
   }
 }
 
